@@ -260,10 +260,6 @@ html.dark textarea{color:#f2f2f7}
 .subchips button{padding:6px 12px;border-radius:16px;border:1px solid var(--sep);background:#fafafa;font-size:12.5px;font-weight:600;color:var(--label);cursor:pointer}
 .subchips button.on{background:var(--label);color:#fff;border-color:var(--label)}
 
-/* 下拉刷新 */
-.ptr{position:absolute;top:0;left:0;right:0;height:0;display:flex;align-items:center;justify-content:center;color:var(--label2);font-size:12px;font-weight:600;overflow:hidden;transition:height .2s;z-index:15}
-.ptr.show{height:40px}
-
 /* toast */
 .toast{
   position:absolute;left:50%;bottom:104px;transform:translate(-50%,20px);background:rgba(28,28,32,.92);color:#fff;
@@ -306,9 +302,7 @@ html.dark textarea{color:#f2f2f7}
   <div class="brandline"><span class="dot"></span><b>「简记」</b> · iPhone 记账 App 可点击原型</div>
   <div class="phone">
     <div class="screen" id="screen">
-      <div class="viewport" id="viewport">
-        <div class="ptr" id="ptr">↓ 松开以导入账单</div>
-      </div>
+      <div class="viewport" id="viewport"></div>
       <nav class="tabbar" id="tabbar"></nav>
       <div class="scrim" id="scrim"></div>
       <div class="sheet" id="sheet"></div>
@@ -466,7 +460,8 @@ function renderHome(){
     <div><h1>简记</h1><div class="sub">${homeSubtitle()}</div></div>
     <div class="navicons">
       <button class="iconbtn" data-act="search" title="搜索">${I.search}</button>
-      <button class="iconbtn" data-act="open-source" title="导入账单">${I.cloud}</button>
+      <button class="iconbtn" data-act="open-source" title="导入账单"
+        style="background:#34c759;color:#fff;width:38px;height:34px;border-radius:17px">${I.plus}</button>
     </div>
   </div>
 
@@ -501,7 +496,7 @@ function renderHome(){
     </div>
   </div>
 
-  ${TX.length===0?`<div class="note info" style="margin-top:14px">${I.info}<p><b>还没有账单</b><br>在首页顶部<b>按住往下拉</b>，选择支付宝或微信导出的账单文件，自动识别、去重、分类。</p></div>`:''}
+  ${TX.length===0?`<div class="note info" style="margin-top:14px">${I.info}<p><b>还没有账单</b><br>点右上角的 ${'<span style="display:inline-block;vertical-align:-2px">☁️</span>'} 或下面的「支付宝 / 微信」卡片，选择导出的账单文件，自动识别、去重、分类。</p></div>`:''}
   ${pending?`<div class="note" style="margin-top:14px;cursor:pointer" data-act="open-uncat">${I.info}<p><b>有 ${pending} 笔待分类 →</b><br>无法从商户名判断的记录已标记出来，点这里逐个补上。</p></div>`:''}
   `;
 
@@ -512,7 +507,7 @@ function renderHome(){
     for(const t of list){ html += txRow(t); shown++; }
     html += `</div></div>`;
   }
-  html += `<div class="hint">共 ${TX.length} 笔 · 点任意一笔查看详情 · 顶部下拉可再次导入</div>`;
+  html += `<div class="hint">共 ${TX.length} 笔 · 点任意一笔查看详情</div>`;
   return html;
 }
 
@@ -527,7 +522,7 @@ function srcInfo(src){
 
 /* 首页副标题：按真实数据生成，不写死 */
 function homeSubtitle(){
-  if(!TX.length) return '还没有账单 · 向下拉导入';
+  if(!TX.length) return '还没有账单';
   const times = TX.map(t=>t.time).sort();
   const first = times[0].slice(0,10), last = times[times.length-1].slice(0,10);
   const fmt = s => `${+s.slice(5,7)}月${+s.slice(8,10)}日`;
@@ -886,7 +881,7 @@ function renderPage(){
   page.addEventListener('scroll',()=>{ S._scrollTop = page.scrollTop; },{passive:true});
   const vp = $('#viewport');
   const old = vp.querySelector('.page'); if(old) old.remove();
-  vp.insertBefore(page, $('#ptr'));
+  vp.appendChild(page);
   page.scrollTop = prev;
   setTimeout(()=>page.classList.remove('enter'), 340);
 }
@@ -1152,7 +1147,7 @@ function renderImportResult(read, dup, added, uncat, errors){  return `
   </div>
   ${errors.length?`<div class="note" style="margin-top:12px">${I.info}<p>${errors.join('<br>')}</p></div>`:''}
   <button class="bigbtn ghost" data-act="pick-again" style="margin-top:14px;margin-bottom:6px">继续导入其它文件</button>
-  <div class="mini-help" id="autoCloseTip">下拉关闭本页即可查看账单</div>
+  <div class="mini-help" id="autoCloseTip">即将自动收起，账单已在首页</div>
   `;
 }
 
@@ -1303,27 +1298,6 @@ document.addEventListener('click', e=>{
   }
 });
 $('#scrim').addEventListener('click', closeSheet);
-
-/* 下拉导入手势（触屏） */
-let pullY = null;
-const vpEl = $('#viewport');
-vpEl.addEventListener('touchstart', e=>{ if(S._scrollTop<=0) pullY = e.touches[0].clientY; },{passive:true});
-vpEl.addEventListener('touchmove', e=>{
-  if(pullY===null) return;
-  $('#ptr').classList.toggle('show', e.touches[0].clientY - pullY > 60);
-},{passive:true});
-vpEl.addEventListener('touchend', ()=>{
-  if($('#ptr').classList.contains('show')) openSheet(renderSourceSheet());
-  $('#ptr').classList.remove('show'); pullY = null;
-});
-/* 桌面端：滚轮置顶继续上滑 = 下拉 */
-let wheelAcc = 0;
-vpEl.addEventListener('wheel', e=>{
-  if(S._scrollTop<=0 && e.deltaY<0){
-    wheelAcc += -e.deltaY;
-    if(wheelAcc>140){ wheelAcc=0; openSheet(renderSourceSheet()); }
-  } else wheelAcc = 0;
-},{passive:true});
 
 /* ===== Face ID 应用锁 =====
    用 WebAuthn 平台认证器（在 iOS Safari 上即 Face ID）。
