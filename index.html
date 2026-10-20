@@ -317,7 +317,7 @@ body{
       <div class="homebar"></div>
     </div>
   </div>
-  <div class="outside">单文件原型 · 按 <kbd>F12</kbd> 切到手机视图效果更接近真机。所有数据为演示样例。</div>
+  <div class="outside">单文件原型 · 按 <kbd>F12</kbd> 切到手机视图效果更接近真机。数据只存本机，不上传。</div>
 </div>
 
 <script>
@@ -476,13 +476,14 @@ const S = {
   demo:false,
   quickPending:null
 };
-/* 首次打开：有存档用存档，没有则把示例数据作为起点并标记 demo */
+/* 首次打开：有存档用存档；没有则从空白开始，等用户导入真实账单 */
 (function initStore(){
   const saved = loadTX();
-  if(saved){ TX = saved; S.imported = saved.length>0; S.demo = loadDemoFlag(); }
-  else { S.demo = true; saveTX(); }
+  if(saved){ TX = saved; S.imported = saved.length>0; }
+  else { TX = []; S.imported = false; saveTX(); }
+  S.demo = false;
 })();
-const markReal = ()=>{ if(S.demo){ S.demo = false; saveTX(); } };
+const markReal = ()=>{ saveTX(); };
 
 /* ====================== 页面：首页 ====================== */
 function txRow(t){
@@ -521,10 +522,10 @@ function renderHome(){
 
   let html = `
   <div class="nav">
-    <div><h1>简记</h1><div class="sub">2026年10月 · ${S.imported?'已同步至 10月20日 18:44':'尚未导入账单'}</div></div>
+    <div><h1>简记</h1><div class="sub">${homeSubtitle()}</div></div>
     <div class="navicons">
       <button class="iconbtn" data-act="search" title="搜索">${I.search}</button>
-      <button class="iconbtn" data-act="go-import" title="导入账单">${I.cloud}</button>
+      <button class="iconbtn" data-act="open-source" title="导入账单">${I.cloud}</button>
     </div>
   </div>
 
@@ -540,41 +541,59 @@ function renderHome(){
   </div>
 
   <div class="quick">
-    <button data-act="go-import"><span class="qi" style="background:${S.imported?'#8e8e93':'#34c759'}">${I.sync}</span>导入账单</button>
     <button data-act="add"><span class="qi" style="background:#0a84ff">${I.plus}</span>手动记一笔</button>
     <button data-act="scan"><span class="qi" style="background:#ff9500">${I.cam}</span>拍照小票</button>
     <button data-act="stats"><span class="qi" style="background:#af52de">${I.chart}</span>看报表</button>
+    <button data-act="act-export"><span class="qi" style="background:#34c759">${I.export}</span>导出备份</button>
   </div>
 
   <div class="source">
     <div class="src" data-act="open-source">
       <div class="logo wx">微</div>
-      <div class="meta"><b>微信支付</b><span>${S.imported?'10月20日 · 已导入':'未导入'}</span></div>
-      ${S.imported?'<i class="dot"></i>':''}
+      <div class="meta"><b>微信支付</b><span>${srcInfo('wx').text}</span></div>
+      ${srcInfo('wx').has?'<i class="dot"></i>':''}
     </div>
     <div class="src" data-act="open-source">
       <div class="logo ali">支</div>
-      <div class="meta"><b>支付宝</b><span>${S.imported?'10月20日 · 已导入':'未导入'}</span></div>
-      ${S.imported?'<i class="dot"></i>':''}
+      <div class="meta"><b>支付宝</b><span>${srcInfo('ali').text}</span></div>
+      ${srcInfo('ali').has?'<i class="dot"></i>':''}
     </div>
   </div>
 
-  ${!S.imported?`<div class="note info" style="margin-top:14px">${I.info}<p><b>第一步：导入你的账单</b><br>在支付宝 / 微信里导出账单文件，选择「用简记打开」即可自动识别、去重、分类。点这里体验完整流程 👇</p></div>
-  <button class="bigbtn" data-act="open-source">${I.cloud} 导入支付宝 / 微信账单</button>`:''}
-  ${pending && S.imported?`<div class="note" style="margin-top:14px">${I.info}<p><b>有 ${pending} 笔待分类</b><br>无法从商户名判断的记录已标记出来，点进去补一个分类，下次会自动记住。</p></div>`:''}
+  ${TX.length===0?`<div class="note info" style="margin-top:14px">${I.info}<p><b>还没有账单</b><br>在首页顶部<b>按住往下拉</b>，选择支付宝或微信导出的账单文件，自动识别、去重、分类。</p></div>`:''}
+  ${pending?`<div class="note" style="margin-top:14px">${I.info}<p><b>有 ${pending} 笔待分类</b><br>无法从商户名判断的记录已标记出来，点进去补一个分类，下次会自动记住。</p></div>`:''}
   `;
 
-  const maxShow = S.imported ? 7 : 4;
   let shown = 0;
   for(const [d,list] of groups){
-    if(shown>=maxShow) break;
     const dayOut = total(list.filter(t=>t.dir==='out'));
     html += `<div class="txgroup"><div class="ghead"><span>${dayLabel(d)}</span><span>支出 ¥${money(dayOut)}</span></div><div class="txlist">`;
     for(const t of list){ html += txRow(t); shown++; }
     html += `</div></div>`;
   }
-  html += `<div class="hint">点任意一笔查看详情 · 顶部下拉可再次导入</div>`;
+  html += `<div class="hint">共 ${TX.length} 笔 · 点任意一笔查看详情 · 顶部下拉可再次导入</div>`;
   return html;
+}
+
+/* 按平台统计：是否已导入、多少笔、最近日期 */
+function srcInfo(src){
+  const list = TX.filter(t=>t.src===src);
+  if(!list.length) return { has:false, text:'未导入', count:0 };
+  const latest = list.map(t=>t.time).sort().pop();
+  const d = latest.slice(5,10).replace('-','/');
+  return { has:true, text:`${list.length} 笔 · 最近 ${d}`, count:list.length };
+}
+
+/* 首页副标题：按真实数据生成，不写死 */
+function homeSubtitle(){
+  if(!TX.length) return '还没有账单 · 向下拉导入';
+  const times = TX.map(t=>t.time).sort();
+  const first = times[0].slice(0,10), last = times[times.length-1].slice(0,10);
+  const fmt = s => `${+s.slice(5,7)}月${+s.slice(8,10)}日`;
+  if(first.slice(0,7) === last.slice(0,7)){
+    return `${first.slice(0,4)}年${first.slice(5,7)}月 · ${fmt(first)} - ${fmt(last)}`;
+  }
+  return `${first} 至 ${last}`;
 }
 
 /* ===== 快捷指令一键记账：确认卡 ===== */
@@ -953,32 +972,120 @@ function closeSheet(){
 }
 
 function runImport(){
+  let picker = $('#filePicker');
+  if(!picker){
+    picker = document.createElement('input');
+    picker.type = 'file';
+    picker.id = 'filePicker';
+    picker.multiple = true;
+    picker.accept = '.csv,.xlsx,.xls';
+    picker.style.display = 'none';
+    document.body.appendChild(picker);
+    picker.addEventListener('change', ()=> handleFiles(picker.files));
+  }
+  picker.value = '';
+  picker.click();
+}
+
+async function handleFiles(files){
+  if(!files || !files.length) return;
   openSheet(`<div class="grab"></div>
     <div style="padding:30px 20px 26px;text-align:center">
       <div style="width:46px;height:46px;margin:0 auto 12px;border-radius:50%;border:3px solid #e3e3e8;border-top-color:#34c759;animation:spin .8s linear infinite"></div>
-      <div style="font-size:15px;font-weight:700" id="impText">正在解析账单文件…</div>
-      <div style="font-size:12.5px;color:var(--label2);margin-top:6px" id="impSub">读取 alipay_record_202610.csv</div>
+      <div style="font-size:15px;font-weight:700" id="impText">正在解析账单…</div>
+      <div style="font-size:12.5px;color:var(--label2);margin-top:6px">读取 ${files.length} 个文件</div>
     </div>`);
-  const steps = [
-    ['正在解析账单文件…','读取 alipay_record_202610.csv · 合并微信 xlsx'],
-    ['正在去重…','比对订单号与时间金额，跳过重复交易'],
-    ['正在自动分类…','匹配 128 条商户规则']
-  ];
-  let i = 0;
-  const tick = ()=>{
-    if(i < steps.length){
-      const a=$('#impText'), b=$('#impSub');
-      if(a){ a.textContent = steps[i][0]; b.textContent = steps[i][1]; }
-      i++; setTimeout(tick, 780);
-    } else {
-      const seen = new Set(TX.map(t=>t.order));
-      const adds = IMPORT_BATCH.filter(t=>!seen.has(t.order));
-      TX = [...adds, ...TX].sort((a,b)=>a.time<b.time?1:-1);
-      S.imported = true;
-      openSheet(renderDedupResult());
+
+  const all = [], errors = [];
+  for(const f of files){
+    try{
+      const list = await BillParser.parseFile(f);
+      all.push(...list);
+    }catch(err){
+      errors.push((f.name||'文件') + '：' + err.message);
     }
-  };
-  setTimeout(tick, 700);
+  }
+  if(!all.length){
+    openSheet(`<div class="grab"></div>
+      <div class="stitle">导入失败</div>
+      <div class="ssub">${errors.join('<br>') || '没有读到可用的交易记录'}</div>
+      <button class="bigbtn ghost" data-act="close-sheet" style="margin-bottom:10px">知道了</button>`);
+    return;
+  }
+
+  const seen = new Set();
+  TX.forEach(t=>{
+    if(t.order) seen.add('o:' + t.order);
+    seen.add('k:' + t.time + '|' + t.merchant + '|' + t.amount);
+  });
+  let dup = 0;
+  const adds = [];
+  for(const t of all){
+    const k1 = 'o:' + t.order, k2 = 'k:' + t.time + '|' + t.merchant + '|' + t.amount;
+    if((t.order && seen.has(k1)) || seen.has(k2)){ dup++; continue; }
+    if(t.order) seen.add(k1);
+    seen.add(k2);
+    adds.push({
+      id: newId(), src: t.src, time: t.time, merchant: t.merchant,
+      product: t.product || '', amount: t.amount, dir: t.dir,
+      type: t.type || '', status: t.status || '',
+      cat: autoCategorize(t.merchant, t.type, t.product), sub: null,
+      auto: true, order: t.order || '', method: t.method || '', note: t.note || ''
+    });
+  }
+  adds.forEach(t=>{ if(t.cat) t.sub = pickSub(t.cat, t.merchant + ' ' + (t.product||'') + ' ' + (t.type||'')); });
+
+  if(adds.length){
+    TX = [...adds, ...TX].sort((a,b)=>a.time<b.time?1:-1);
+    S.imported = true;
+    markReal();
+  }
+  const uncat = adds.filter(a=>!a.cat).length;
+  openSheet(renderImportResult(all.length, dup, adds.length, uncat, errors));
+}
+
+const CAT_RULES = [
+  ['food',  /餐饮|外卖|奶茶|咖啡|汉堡|烤鸭|火锅|炒饭|粉|便利店|零食|蜜雪|古茗|瑞幸|塔斯汀|美团|饿了么|闪购/i],
+  ['shop',  /超市|商场|百货|购物|淘宝|京东|拼多多|服饰|数码|美妆|日用|盒马|华润|万家|商行/i],
+  ['traf',  /地铁|公交|打车|滴滴|出行|加油|高铁|火车|机票|共享单车|充电/i],
+  ['life',  /电费|水费|燃气|话费|宽带|房租|物业|缴费|国家电网|移动|联通|电信|宿舍|饮水|淋浴|热水|洗衣/i],
+  ['fun',   /电影|游戏|演出|KTV|旅游|门票|会员|订阅|Apple|iCloud|视频|音乐|网吧/i],
+  ['health',/医院|药|诊所|体检|医疗|牙科/i],
+  ['learn', /书店|图书|课程|培训|考试|学费|学校|学院|教材/i],
+  ['other', /红包|转账|人情|收款/i]
+];
+function autoCategorize(merchant, type, product){
+  const s = [merchant, product, type].filter(Boolean).join(' ');
+  for(const [cat, re] of CAT_RULES){ if(re.test(s)) return cat; }
+  return null;
+}
+function pickSub(cat, text){
+  const c = catById(cat);
+  if(!c) return null;
+  const s = text || '';
+  if(cat==='food'){ if(/奶茶|咖啡|果茶/.test(s)) return '咖啡奶茶'; if(/外卖/.test(s)) return '外卖'; if(/早餐/.test(s)) return '早餐'; if(/午餐/.test(s)) return '午餐'; if(/晚餐/.test(s)) return '晚餐'; return '零食'; }
+  if(cat==='shop'){ if(/超市|日用|百货/.test(s)) return '日用品'; if(/数码|电子/.test(s)) return '数码'; if(/美妆/.test(s)) return '美妆'; return '服饰鞋包'; }
+  if(cat==='traf'){ if(/地铁|公交/.test(s)) return '地铁公交'; if(/打车|滴滴/.test(s)) return '打车'; if(/单车/.test(s)) return '共享单车'; return '加油'; }
+  if(cat==='life'){ if(/电费|水费|燃气/.test(s)) return '水电燃气'; if(/话费|宽带/.test(s)) return '话费网费'; return '房租'; }
+  return c.subs[0] || null;
+}
+
+function renderImportResult(read, dup, added, uncat, errors){
+  return `
+  <div class="grab"></div>
+  <div class="okico">${I.check}</div>
+  <div class="stitle center" style="padding-bottom:2px">导入完成</div>
+  <div class="ssub center" style="padding-bottom:14px">已写入本机，刷新不会丢失</div>
+  <div class="dedup">
+    <div class="drow"><span>识别到交易</span><b>${read} 笔</b></div>
+    <div class="drow"><span>重复跳过</span><b style="color:var(--label2)">${dup} 笔</b></div>
+    <div class="drow"><span>新增入账</span><b style="color:var(--green)">+${added} 笔</b></div>
+    <div class="drow"><span>需手动分类</span><b style="color:${uncat?'var(--orange)':'var(--green)'}">${uncat} 笔</b></div>
+  </div>
+  ${errors.length?`<div class="note" style="margin-top:12px">${I.info}<p>${errors.join('<br>')}</p></div>`:''}
+  <button class="bigbtn" data-act="finish-import">查看账单</button>
+  <button class="bigbtn ghost" data-act="pick-again" style="margin-top:10px;margin-bottom:6px">继续导入其它文件</button>
+  `;
 }
 
 document.addEventListener('click', e=>{
@@ -1009,9 +1116,10 @@ document.addEventListener('click', e=>{
     case 'open-source': openSheet(renderSourceSheet()); break;
     case 'pick-files':  runImport(); break;
     case 'run-import':  runImport(); break;
+    case 'pick-again':  runImport(); break;
     case 'finish-import':
       closeSheet(); S.tab='home'; S.detailId=null; S._scrollTop=0; rerender();
-      setTimeout(()=>toast('已更新 10 月账单'),260); break;
+      setTimeout(()=>toast('账单已更新'),260); break;
     case 'close-sheet': closeSheet(); rerender(true); break;
     case 'view-cat':  S.statsView='cat'; rerender(true); break;
     case 'view-trend':S.statsView='trend'; rerender(true); break;
@@ -1158,6 +1266,321 @@ function bootQuick(){
 }
 
 if(!bootQuick()){if(location.hash==='#source'){openSheet(renderSourceSheet());}}
+
+/* ============================================================
+   通用账单解析器  BillParser
+   支持：支付宝 CSV（GBK，前言 24 行）、微信 XLSX（前言 18 行）
+   输出统一结构：{time, merchant, product, amount, dir, type, status, order, note, method}
+   ============================================================ */
+const BillParser = (() => {
+
+  /* ---------- GBK 解码（支付宝 CSV） ---------- */
+  function decodeGBK(buf) {
+    // 优先用浏览器内置 TextDecoder('gbk')，Safari 10.1+ 支持
+    try {
+      return new TextDecoder('gbk').decode(buf);
+    } catch (e) { /* 继续尝试下面 */ }
+    try {
+      return new TextDecoder('gb18030').decode(buf);
+    } catch (e) { }
+    // 兜底：按 latin1 读出，中文会乱码但不崩溃
+    let s = '';
+    const u8 = new Uint8Array(buf);
+    for (let i = 0; i < u8.length; i++) s += String.fromCharCode(u8[i]);
+    return s;
+  }
+  function decodeAuto(buf) {
+    const u8 = new Uint8Array(buf);
+    // BOM 判断
+    if (u8.length >= 3 && u8[0] === 0xEF && u8[1] === 0xBB && u8[2] === 0xBF)
+      return new TextDecoder('utf-8').decode(buf);
+    // 尝试 UTF-8，非法则回落 GBK
+    try {
+      const s = new TextDecoder('utf-8', { fatal: true }).decode(buf);
+      if (/[\u4e00-\u9fa5]/.test(s)) return s;
+    } catch (e) { }
+    return decodeGBK(buf);
+  }
+
+  /* ---------- 简易 CSV 解析（支持引号包裹与换行） ---------- */
+  function parseCSV(text) {
+    const rows = [];
+    let row = [], cell = '', inQ = false;
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      if (inQ) {
+        if (c === '"') {
+          if (text[i + 1] === '"') { cell += '"'; i++; }
+          else inQ = false;
+        } else cell += c;
+      } else {
+        if (c === '"') inQ = true;
+        else if (c === ',') { row.push(cell); cell = ''; }
+        else if (c === '\n') { row.push(cell); rows.push(row); row = []; cell = ''; }
+        else if (c === '\r') { /* skip */ }
+        else cell += c;
+      }
+    }
+    if (cell.length || row.length) { row.push(cell); rows.push(row); }
+    return rows;
+  }
+
+  /* ---------- XLSX 解析（纯前端，读 zip → sharedStrings + sheet1） ---------- */
+  async function readZip(buf) {
+    // 解析 zip 中央目录，取出需要的 XML
+    const dv = new DataView(buf);
+    const u8 = new Uint8Array(buf);
+    // 找 EOCD
+    let eocd = -1;
+    for (let i = u8.length - 22; i >= 0 && i > u8.length - 66000; i--) {
+      if (dv.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
+    }
+    if (eocd < 0) throw new Error('不是有效的 xlsx');
+    const cdCount = dv.getUint16(eocd + 10, true);
+    let p = dv.getUint32(eocd + 16, true);
+    const files = {};
+    for (let n = 0; n < cdCount; n++) {
+      if (dv.getUint32(p, true) !== 0x02014b50) break;
+      const method = dv.getUint16(p + 10, true);
+      const csize = dv.getUint32(p + 20, true);
+      const usize = dv.getUint32(p + 24, true);
+      const nlen = dv.getUint16(p + 28, true);
+      const elen = dv.getUint16(p + 30, true);
+      const clen = dv.getUint16(p + 32, true);
+      const lho = dv.getUint32(p + 42, true);
+      let name = '';
+      for (let i = 0; i < nlen; i++) name += String.fromCharCode(u8[p + 46 + i]);
+      files[name] = { method, csize, usize, lho };
+      p += 46 + nlen + elen + clen;
+    }
+    async function get(name) {
+      const f = files[name];
+      if (!f) return null;
+      const lp = f.lho;
+      const nlen = dv.getUint16(lp + 26, true);
+      const elen = dv.getUint16(lp + 28, true);
+      const start = lp + 30 + nlen + elen;
+      const data = u8.subarray(start, start + f.csize);
+      if (f.method === 0) return new TextDecoder('utf-8').decode(data);
+      if (f.method === 8) {
+        if (typeof DecompressionStream === 'undefined') throw new Error('当前浏览器不支持解压 xlsx，请改用 Safari 或最新版浏览器');
+        const ds = new DecompressionStream('deflate-raw');
+        const stream = new Blob([data]).stream().pipeThrough(ds);
+        const ab = await new Response(stream).arrayBuffer();
+        return new TextDecoder('utf-8').decode(ab);
+      }
+      return null;
+    }
+    return { files, get };
+  }
+
+  function xmlText(xml) {
+    return xml.replace(/<[^>]+>/g, '');
+  }
+  function unescapeXml(s) {
+    return s.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')
+      .replace(/&quot;/g, '"').replace(/&apos;/g, "'");
+  }
+
+  async function parseXLSX(buf) {
+    const zip = await readZip(buf);
+    const sharedXml = await zip.get('xl/sharedStrings.xml') || '';
+    const shared = [];
+    const siRe = /<si[\s>][\s\S]*?<\/si>|<si\/>/g;
+    const sis = sharedXml.match(siRe) || [];
+    for (const si of sis) {
+      const ts = si.match(/<t[^>]*>([\s\S]*?)<\/t>/g) || [];
+      shared.push(ts.map(t => unescapeXml(xmlText(t))).join(''));
+    }
+    let sheetXml = await zip.get('xl/worksheets/sheet1.xml');
+    if (!sheetXml) {
+      for (const k of Object.keys(zip.files)) {
+        if (/^xl\/worksheets\/sheet\d+\.xml$/.test(k)) { sheetXml = await zip.get(k); break; }
+      }
+    }
+    if (!sheetXml) throw new Error('找不到工作表');
+    const rows = [];
+    const rowRe = /<row[^>]*>([\s\S]*?)<\/row>/g;
+    let rm;
+    while ((rm = rowRe.exec(sheetXml))) {
+      const cells = [];
+      const cellRe = /<c\b([^>]*?)(?:\/>|>([\s\S]*?)<\/c>)/g;
+      let cm;
+      while ((cm = cellRe.exec(rm[1]))) {
+        const attrs = cm[1] || '';
+        const body = cm[2] || '';
+        // 按单元格坐标（A/B/C…）定位，避免空单元格导致错位
+        const refM = attrs.match(/\br="([A-Z]+)\d+"/);
+        const colIdx = refM ? colLetterToIndex(refM[1]) : cells.length;
+        const t = (attrs.match(/\bt="([^"]+)"/) || [])[1];
+        let v = '';
+        if (t === 's') {
+          const idxM = body.match(/<v>([\s\S]*?)<\/v>/);
+          if (idxM) v = shared[parseInt(idxM[1], 10)] || '';
+        } else if (t === 'inlineStr') {
+          const ts = body.match(/<t[^>]*>([\s\S]*?)<\/t>/g) || [];
+          v = ts.map(x => unescapeXml(xmlText(x))).join('');
+        } else {
+          const vm = body.match(/<v>([\s\S]*?)<\/v>/);
+          v = vm ? unescapeXml(vm[1]) : '';
+        }
+        cells[colIdx] = v;
+      }
+      const filled = [];
+      for (let i = 0; i < cells.length; i++) filled.push(cells[i] === undefined ? '' : cells[i]);
+      rows.push(filled);
+    }
+    return rows;
+  }
+
+  /* 列字母转索引：A=0, B=1, ... AA=26 */
+  function colLetterToIndex(s) {
+    let n = 0;
+    for (let i = 0; i < s.length; i++) n = n * 26 + (s.charCodeAt(i) - 64);
+    return n - 1;
+  }
+
+  /* Excel 日期序列号 → 'YYYY-MM-DD HH:mm:ss'
+     序列号本身即本地时间，不做时区偏移 */
+  function excelSerialToTime(v) {
+    const n = parseFloat(v);
+    if (!isFinite(n) || n <= 0) return null;
+    const ms = Math.round((n - 25569) * 86400 * 1000); // 25569 = 1970-01-01
+    const d = new Date(ms);
+    if (isNaN(d.getTime())) return null;
+    const p = x => String(x).padStart(2, '0');
+    return `${d.getUTCFullYear()}-${p(d.getUTCMonth() + 1)}-${p(d.getUTCDate())} ${p(d.getUTCHours())}:${p(d.getUTCMinutes())}:${p(d.getUTCSeconds())}`;
+  }
+
+  /* ---------- 工具 ---------- */
+  const norm = s => (s == null ? '' : String(s))
+    .replace(/\t/g, '')
+    .replace(/^\uFEFF/, '')
+    .replace(/^"+|"+$/g, '')   // 去掉首尾包裹的引号
+    .trim();
+  const isSlash = s => s === '/' || s === '' || s == null;
+  function toAmount(s) {
+    const t = norm(s).replace(/[¥￥,]/g, '').replace(/[^\d.\-]/g, '');
+    const v = parseFloat(t);
+    return isFinite(v) ? Math.abs(Math.round(v * 100) / 100) : 0;
+  }
+  function normTime(s) {
+    const t = norm(s);
+    const m = t.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})(?:[ T](\d{1,2}):(\d{1,2})(?::(\d{1,2}))?)?/);
+    if (!m) return null;
+    const p = n => String(n).padStart(2, '0');
+    return `${m[1]}-${p(m[2])}-${p(m[3])} ${p(m[4] || 0)}:${p(m[5] || 0)}:${p(m[6] || 0)}`;
+  }
+
+  /* ---------- 支付宝 CSV ---------- */
+  function parseAlipay(text) {
+    const rows = parseCSV(text);
+    let head = -1, cols = null;
+    for (let i = 0; i < Math.min(rows.length, 60); i++) {
+      const r = rows[i].map(norm);
+      if (r.includes('交易时间') && r.some(c => c.startsWith('收/支') || c === '收/支')) {
+        head = i; cols = r; break;
+      }
+    }
+    if (head < 0) return null;
+    const idx = (name) => {
+      // 精确匹配优先，其次用「以该名开头」兜底（表头可能带单位/空格）
+      let k = cols.findIndex(c => c === name);
+      if (k < 0) k = cols.findIndex(c => c.startsWith(name));
+      return k;
+    };
+    const iTime = idx('交易时间'), iCat = idx('交易分类'), iMer = idx('交易对方');
+    const iProd = idx('商品说明'), iDir = idx('收/支'), iAmt = idx('金额');
+    const iWay = idx('收/付款方式'), iSt = idx('交易状态'), iOrd = idx('交易订单号'), iNote = idx('备注');
+    const out = [];
+    for (let i = head + 1; i < rows.length; i++) {
+      const r = rows[i]; if (!r || r.length < 5) continue;
+      const time = normTime(r[iTime]); if (!time) continue;
+      const amt = toAmount(r[iAmt]); if (!amt) continue;
+      const dirRaw = norm(r[iDir]);
+      const status = norm(r[iSt]);
+      const note = norm(iNote >= 0 ? r[iNote] : '');
+      if (status.includes('交易关闭')) continue;               // 钱没出去
+      let dir = 'out';
+      if (dirRaw === '收入') dir = 'in';
+      else if (dirRaw === '不计收支') dir = 'neutral';          // 小荷包等
+      else if (dirRaw !== '支出') dir = 'neutral';
+      if (status.includes('退款')) dir = 'in';                  // 退款算冲抵
+      out.push({
+        src: 'ali', time, merchant: norm(r[iMer]) || '未知商户',
+        product: norm(iProd >= 0 ? r[iProd] : ''), amount: amt, dir,
+        type: norm(iCat >= 0 ? r[iCat] : ''), status, order: norm(r[iOrd]),
+        method: norm(iWay >= 0 ? r[iWay] : ''), note: isSlash(note) ? '' : note
+      });
+    }
+    return out;
+  }
+
+  /* ---------- 微信 XLSX ---------- */
+  function parseWechat(rows) {
+    let head = -1, cols = null;
+    for (let i = 0; i < Math.min(rows.length, 60); i++) {
+      const r = (rows[i] || []).map(norm);
+      if (r.includes('交易时间') && r.includes('交易对方')) { head = i; cols = r; break; }
+    }
+    if (head < 0) return null;
+    const idx = (name) => cols.findIndex(c => c === name || c.startsWith(name));
+    const iTime = idx('交易时间'), iType = idx('交易类型'), iMer = idx('交易对方');
+    const iProd = idx('商品'), iDir = idx('收/支'), iAmt = idx('金额');
+    const iWay = idx('支付方式'), iSt = idx('当前状态'), iOrd = idx('交易单号'), iNote = idx('备注');
+    const out = [];
+    for (let i = head + 1; i < rows.length; i++) {
+      const r = rows[i]; if (!r || r.length < 5) continue;
+      // 微信 xlsx 的时间可能是 Excel 序列号，也可能是文本
+      let time = normTime(r[iTime]);
+      if (!time) time = excelSerialToTime(r[iTime]);
+      if (!time) continue;
+      const amt = toAmount(r[iAmt]); if (!amt) continue;
+      const dirRaw = norm(r[iDir]);
+      const status = norm(r[iSt]);
+      const type = norm(r[iType]);
+      const noteRaw = norm(iNote >= 0 ? r[iNote] : '');
+      let dir;
+      if (dirRaw === '收入') dir = 'in';
+      else if (dirRaw === '支出') dir = 'out';
+      else dir = 'neutral';                                    // "/" 中性
+      // 提现/充值/还款视为中性
+      if (/提现|充值|还款|转入零钱通|零钱通/.test(type)) dir = 'neutral';
+      if (/退款/.test(status) || /退款/.test(type)) dir = 'in';
+      out.push({
+        src: 'wx', time, merchant: norm(r[iMer]) || '未知商户',
+        product: isSlash(norm(iProd >= 0 ? r[iProd] : '')) ? '' : norm(r[iProd]),
+        amount: amt, dir, type, status, order: norm(r[iOrd]),
+        method: isSlash(norm(iWay >= 0 ? r[iWay] : '')) ? '' : norm(r[iWay]),
+        note: isSlash(noteRaw) ? '' : noteRaw
+      });
+    }
+    return out;
+  }
+
+  /* ---------- 对外入口 ---------- */
+  async function parseFile(file) {
+    const name = (file.name || '').toLowerCase();
+    const buf = await file.arrayBuffer();
+    if (name.endsWith('.xlsx') || name.endsWith('.xls')) {
+      const rows = await parseXLSX(buf);
+      const wx = parseWechat(rows);
+      const ali = parseAlipay(rows.map(r => (r || []).join(',')) .join('\n'));
+      const list = wx || ali;
+      if (!list) throw new Error('无法识别表格结构（不是微信/支付宝账单？）');
+      return list;
+    }
+    const text = decodeAuto(buf);
+    const ali = parseAlipay(text);
+    if (ali) return ali;
+    const wx = parseWechat(parseCSV(text));
+    if (wx) return wx;
+    throw new Error('无法识别文件格式，请确认是支付宝或微信官方导出的账单');
+  }
+
+  return { parseFile, parseAlipay, parseWechat, parseCSV, decodeAuto, normTime, toAmount };
+})();
+
 </script>
 </body>
 </html>
