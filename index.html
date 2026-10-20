@@ -799,7 +799,8 @@ function renderMine(){
     ['bell','待分类提醒','有无法自动分类的记录时提醒',null,'toggle-billNotify'],
     ['lock','Face ID 锁','打开 App 需面容解锁',null,'toggle-lock'],
     ['sun','深色外观','跟随系统 / 手动切换',null,'toggle-dark'],
-    ['export','导出数据','导出 CSV 到「文件」App','#5856d6','act-export']
+    ['export','导出数据','导出 CSV 到「文件」App','#5856d6','act-export'],
+    ['info','清空全部数据','删除本机所有账单记录','#ff3b30','act-clear']
   ];
   return `
   <div class="nav"><div><h1>我的</h1></div><div class="navicons"><button class="iconbtn" data-act="go-home">${I.home}</button></div></div>
@@ -1070,8 +1071,22 @@ function pickSub(cat, text){
   return c.subs[0] || null;
 }
 
-function renderImportResult(read, dup, added, uncat, errors){
+/* ===== 清空数据确认 ===== */
+function renderClearSheet(){
   return `
+  <div class="grab"></div>
+  <div class="okico" style="background:rgba(255,59,48,.12)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#ff3b30" stroke-width="2.2" stroke-linecap="round"><path d="M12 8v5M12 16v.5"/><circle cx="12" cy="12" r="9"/></svg>
+  </div>
+  <div class="stitle center" style="padding-bottom:2px">清空全部数据？</div>
+  <div class="ssub center" style="padding-bottom:14px">将删除本机保存的 ${TX.length} 笔账单，无法恢复。<br>建议先「导出数据」备份。</div>
+  <button class="bigbtn" data-act="do-export" style="background:#5856d6;box-shadow:none">${I.export} 先导出备份</button>
+  <button class="bigbtn" data-act="do-clear" style="background:#ff3b30;box-shadow:none;margin-top:10px">确认清空</button>
+  <button class="bigbtn ghost" data-act="close-sheet" style="margin-top:10px;margin-bottom:6px">取消</button>
+  `;
+}
+
+function renderImportResult(read, dup, added, uncat, errors){  return `
   <div class="grab"></div>
   <div class="okico">${I.check}</div>
   <div class="stitle center" style="padding-bottom:2px">导入完成</div>
@@ -1147,7 +1162,14 @@ document.addEventListener('click', e=>{
       S.detailId=null; S._scrollTop=0; rerender(); toast('已将这笔排除出统计'); break;
     case 'act-cats':  toast('管理分类与子类'); break;
     case 'act-rules': toast('自动分类规则：128 条商户命中规则'); break;
-    case 'act-export':toast('导出 CSV 到「文件」App'); break;
+    case 'act-export': openSheet(renderExportSheet()); break;
+    case 'act-clear':  openSheet(renderClearSheet()); break;
+    case 'do-clear':
+      TX = []; S.imported = false; S.quickPending = null;
+      try{ localStorage.removeItem(LS_KEY); localStorage.removeItem(LS_DEMO); }catch(e){}
+      saveTX();
+      closeSheet(); S.tab='home'; S.detailId=null; S._scrollTop=0; rerender(true);
+      toast('已清空全部数据'); break;
     case 'act-privacy':toast('账单原文不上传，仅本地解析'); break;
     case 'act-about': toast('简记 v1.0 · 原型'); break;
     default:
