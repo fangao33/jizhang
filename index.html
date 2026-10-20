@@ -662,11 +662,7 @@ function renderShortcutSheet(){
   `;
 }
 
-function _homeTail(){
-  return html;
-}
-
-/* ====================== 页面：统计 ====================== */
+/* =================== 页面：统计 ====================== */
 function renderStats(){
   const out = TX.filter(t=>t.dir==='out');
   const sum = total(out);
@@ -1161,7 +1157,7 @@ function bootQuick(){
   return false;
 }
 
-if(!bootQuick() && location.hash===''#source'') openSheet(renderSourceSheet());
+if(!bootQuick()){if(location.hash==='#source'){openSheet(renderSourceSheet());}}
 </script>
 </body>
 </html>
