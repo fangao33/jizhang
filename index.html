@@ -40,26 +40,10 @@ body{
   position:relative;width:100%;height:100%;border-radius:46px;overflow:hidden;background:var(--bg);color:var(--label);
   display:flex;flex-direction:column;isolation:isolate;
 }
-.statusbar{
-  height:54px;flex:none;display:flex;align-items:center;justify-content:space-between;
-  padding:16px 30px 0;font-size:15px;font-weight:600;letter-spacing:.2px;position:relative;z-index:30;
-}
-.statusbar .right{display:flex;align-items:center;gap:6px}
-.sig{display:flex;align-items:flex-end;gap:2px;height:11px}
-.sig i{display:block;width:3px;background:var(--label);border-radius:1px}
-.sig i:nth-child(1){height:4px}.sig i:nth-child(2){height:6px}.sig i:nth-child(3){height:8px}.sig i:nth-child(4){height:11px}
-.wifi{border:3px solid var(--label);border-bottom-color:transparent;border-left-color:transparent;border-right-color:transparent;border-radius:50%;width:14px;height:10px}
-.batt{width:25px;height:12px;border:1.5px solid var(--label);border-radius:3.5px;position:relative;opacity:.95}
-.batt::after{content:"";position:absolute;right:-4px;top:3px;width:2px;height:4px;background:var(--label);border-radius:0 2px 2px 0}
-.batt i{position:absolute;inset:1.5px;width:70%;background:var(--label);border-radius:2px}
-.island{
-  position:absolute;top:11px;left:50%;transform:translateX(-50%);width:124px;height:36px;background:#000;border-radius:20px;z-index:31;
-  display:flex;align-items:center;justify-content:flex-end;padding-right:12px;
-}
-.island .cam{width:9px;height:9px;border-radius:50%;background:#15151a;box-shadow:inset 0 0 0 1px #24242b,0 0 0 1px #000}
 
 .viewport{position:relative;flex:1;overflow:hidden}
 .page{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;padding:0 0 108px;background:var(--bg);
+  padding-top:max(env(safe-area-inset-top), 26px);
   scrollbar-width:none;-webkit-overflow-scrolling:touch;}
 .page::-webkit-scrollbar{display:none}
 .page.enter{animation:pageIn .32s cubic-bezier(.32,.72,0,1)}
@@ -152,7 +136,6 @@ body{
 .tab{background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10.5px;color:#8e8e93;font-weight:600;cursor:pointer;padding-top:2px}
 .tab svg{width:24px;height:24px}
 .tab.on{color:var(--green)}
-.homebar{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:3px;background:#000;opacity:.85;z-index:40}
 
 /* ---------- 统计页 ---------- */
 .seg{display:flex;background:rgba(120,120,128,.12);border-radius:10px;padding:2px;margin:0 16px}
@@ -289,8 +272,6 @@ body{
 @media (max-width:440px){
   .phone{width:100vw;height:calc(100vh - 20px);border-radius:0;padding:0;box-shadow:none;background:none}
   .screen{border-radius:0}
-  .island{display:none}
-  .statusbar{height:44px;padding-top:10px}
   .outside{display:none}
 }
 </style>
@@ -301,12 +282,6 @@ body{
   <div class="brandline"><span class="dot"></span><b>「简记」</b> · iPhone 记账 App 可点击原型</div>
   <div class="phone">
     <div class="screen" id="screen">
-      <div class="statusbar"><span id="clock">9:41</span><div class="right">
-        <div class="sig"><i></i><i></i><i></i><i></i></div>
-        <div class="wifi"></div>
-        <div class="batt"><i></i></div>
-      </div></div>
-      <div class="island"><div class="cam"></div></div>
       <div class="viewport" id="viewport">
         <div class="ptr" id="ptr">↓ 松开以导入账单</div>
       </div>
@@ -314,7 +289,6 @@ body{
       <div class="scrim" id="scrim"></div>
       <div class="sheet" id="sheet"></div>
       <div class="toast" id="toast"></div>
-      <div class="homebar"></div>
     </div>
   </div>
   <div class="outside">单文件原型 · 按 <kbd>F12</kbd> 切到手机视图效果更接近真机。数据只存本机，不上传。</div>
@@ -792,13 +766,14 @@ function renderImport(){
 
 /* ====================== 页面：我的 ====================== */
 function renderMine(){
+  // 锁状态以本地存储为准
+  S.toggles.lock = lockEnabled();
   const rows = [
     ['tag','分类与标签','编辑分类和子类，图标颜色','#ff9500','act-cats'],
     ['rule','自动分类规则','按商户 / 关键词自动归类','#34c759','act-rules'],
     ['sync','账单来源','微信支付 · 支付宝','#0a84ff','open-source'],
     ['bell','待分类提醒','有无法自动分类的记录时提醒',null,'toggle-billNotify'],
-    ['lock','Face ID 锁','打开 App 需面容解锁',null,'toggle-lock'],
-    ['sun','深色外观','跟随系统 / 手动切换',null,'toggle-dark'],
+    ['lock','Face ID 锁','打开 App 需面容解锁',null,'toggle-lock'],    ['sun','深色外观','跟随系统 / 手动切换',null,'toggle-dark'],
     ['export','导出数据','导出 CSV 到「文件」App','#5856d6','act-export'],
     ['info','清空全部数据','删除本机所有账单记录','#ff3b30','act-clear']
   ];
@@ -1174,9 +1149,33 @@ document.addEventListener('click', e=>{
     case 'act-about': toast('简记 v1.0 · 原型'); break;
     default:
       if(act && act.startsWith('toggle-')){
-        const k = act.slice(7); S.toggles[k] = !S.toggles[k];
-        const sw = tgt.querySelector('.switch'); if(sw) sw.classList.toggle('on', S.toggles[k]);
-        toast((S.toggles[k]?'已开启':'已关闭') + ({billNotify:'待分类提醒',lock:'面容锁',dark:'深色外观'}[k]||''));
+        const k = act.slice(7);
+        const sw = tgt.querySelector('.switch');
+
+        /* Face ID 需要真正注册/验证，不能只翻开关 */
+        if(k === 'lock'){
+          if(lockEnabled()){
+            disableLock();
+            if(sw) sw.classList.remove('on');
+            toast('已关闭面容锁');
+          }else{
+            toast('正在设置面容 ID…');
+            enableLock().then(ok=>{
+              if(ok){
+                if(sw) sw.classList.add('on');
+                toast('已开启：下次打开需面容解锁');
+              }else{
+                if(sw) sw.classList.remove('on');
+                toast('未开启（可能取消了验证）');
+              }
+            });
+          }
+          return;
+        }
+
+        S.toggles[k] = !S.toggles[k];
+        if(sw) sw.classList.toggle('on', S.toggles[k]);
+        toast((S.toggles[k]?'已开启':'已关闭') + ({billNotify:'待分类提醒',dark:'深色外观'}[k]||''));
       }
   }
 });
@@ -1203,17 +1202,124 @@ vpEl.addEventListener('wheel', e=>{
   } else wheelAcc = 0;
 },{passive:true});
 
-function tickClock(){
-  const d = new Date();
-  $('#clock').textContent = `${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`;
-}
-tickClock(); setInterval(tickClock, 20000);
+/* ===== Face ID 应用锁 =====
+   用 WebAuthn 平台认证器（在 iOS Safari 上即 Face ID）。
+   启用时注册一个本地凭据；之后每次打开 App 需通过一次 Face ID 验证。
+   说明：这是纯前端的本地锁，无法抵御能直接读到设备文件的高级攻击，
+   但足以防止别人拿起你手机随手翻账本。 */
+const LOCK_KEY = 'jianji.lock.v1';   // '1' 表示已启用
+const CRED_KEY = 'jianji.lock.cred'; // 凭据 id（base64）
 
-/* 可选：URL hash 直达界面，便于快速查看
-   #import / #stats / #mine / #detail / #imported / #source */
+const hasWebAuthn = ()=> !!(window.PublicKeyCredential && navigator.credentials && navigator.credentials.create);
+async function platformAvailable(){
+  if(!hasWebAuthn()) return false;
+  try{
+    if(PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable){
+      return await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+    }
+  }catch(e){}
+  return true;
+}
+const b64 = buf => btoa(String.fromCharCode(...new Uint8Array(buf)));
+const unb64 = s => Uint8Array.from(atob(s), c=>c.charCodeAt(0));
+
+/* 启用：注册本地凭据并做一次验证 */
+async function enableLock(){
+  if(!hasWebAuthn()){
+    toast('当前浏览器不支持面容验证');
+    return false;
+  }
+  try{
+    const cred = await navigator.credentials.create({
+      publicKey:{
+        challenge: crypto.getRandomValues(new Uint8Array(32)),
+        rp:{ name:'简记' },
+        user:{ id: crypto.getRandomValues(new Uint8Array(16)), name:'jianji-user', displayName:'简记用户' },
+        pubKeyCredParams:[{type:'public-key', alg:-7}, {type:'public-key', alg:-257}],
+        authenticatorSelection:{ authenticatorAttachment:'platform', userVerification:'required', residentKey:'preferred' },
+        timeout: 60000,
+        attestation:'none'
+      }
+    });
+    if(!cred) return false;
+    try{
+      localStorage.setItem(CRED_KEY, b64(cred.rawId));
+      localStorage.setItem(LOCK_KEY, '1');
+    }catch(e){}
+    S.toggles.lock = true;
+    return true;
+  }catch(e){
+    // 用户取消或设备不支持
+    return false;
+  }
+}
+
+/* 验证：用已注册凭据做一次 Face ID */
+async function verifyLock(){
+  // 没有凭据记录时，退化为直接放行（避免把自己锁死）
+  let credId = null;
+  try{ credId = localStorage.getItem(CRED_KEY); }catch(e){}
+  if(!credId) return true;
+  try{
+    const opts = {
+      publicKey:{
+        challenge: crypto.getRandomValues(new Uint8Array(32)),
+        timeout: 60000,
+        userVerification:'required',
+        allowCredentials:[{ type:'public-key', id: unb64(credId) }]
+      }
+    };
+    const res = await navigator.credentials.get(opts);
+    return !!res;
+  }catch(e){
+    return false;
+  }
+}
+
+function lockEnabled(){
+  try{ return localStorage.getItem(LOCK_KEY)==='1'; }catch(e){ return false; }
+}
+function disableLock(){
+  try{ localStorage.removeItem(LOCK_KEY); localStorage.removeItem(CRED_KEY); }catch(e){}
+  S.toggles.lock = false;
+}
+
+/* 锁屏界面 */
+async function showLockScreen(){
+  const overlay = document.createElement('div');
+  overlay.id = 'lockOverlay';
+  overlay.innerHTML = `
+    <div style="position:absolute;inset:0;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);background:rgba(242,242,247,.92);z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:32px;text-align:center">
+      <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#22b06a,#1677ff);display:grid;place-items:center;color:#fff;font-weight:800;font-size:24px;box-shadow:0 10px 28px -12px rgba(22,119,255,.8)">简</div>
+      <div>
+        <div style="font-size:19px;font-weight:800;color:#111114">简记已锁定</div>
+        <div style="font-size:13px;color:#8e8e93;margin-top:4px" id="lockMsg">用面容 ID 解锁</div>
+      </div>
+      <button id="lockBtn" style="margin-top:6px;border:none;background:#1677ff;color:#fff;font-size:15px;font-weight:700;padding:12px 26px;border-radius:14px;display:flex;align-items:center;gap:8px">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16"/><path d="M9 10v1M15 10v1M12 10v3.2h-1"/><path d="M9.4 16.2c1.6 1 3.6 1 5.2 0"/></svg>
+        使用面容 ID
+      </button>
+    </div>`;
+  document.getElementById('screen').appendChild(overlay);
+
+  const btn = overlay.querySelector('#lockBtn');
+  const msg = overlay.querySelector('#lockMsg');
+  const attempt = async () => {
+    btn.style.opacity = '.6';
+    msg.textContent = '正在验证…';
+    const ok = await verifyLock();
+    if(ok){ overlay.remove(); }
+    else { msg.textContent = '验证未通过，请重试'; btn.style.opacity = '1'; }
+  };
+  btn.addEventListener('click', attempt);
+  setTimeout(attempt, 350); // 进入即自动唤起 Face ID
+}
+
+/* 锁屏在启动末尾唤起，见文件末尾 */
+
+/* 可选：URL hash 直达界面，便于快速查看 */
 (function bootFromHash(){
   const h = location.hash.replace('#','');
-  if(h==='imported'){ S.imported = true; TX = [...IMPORT_BATCH.filter(t=>t.cat),...TX].sort((a,b)=>a.time<b.time?1:-1); }
   if(h==='import') S.tab='import';
   if(h==='stats') S.tab='stats';
   if(h==='mine') S.tab='mine';
@@ -1602,6 +1708,12 @@ const BillParser = (() => {
 
   return { parseFile, parseAlipay, parseWechat, parseCSV, decodeAuto, normTime, toAmount };
 })();
+
+/* ===== 启动收尾：已开启面容锁则先锁住 ===== */
+if(lockEnabled()){
+  S.toggles.lock = true;
+  setTimeout(showLockScreen, 60);
+}
 
 </script>
 </body>
