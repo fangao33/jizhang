@@ -286,6 +286,66 @@ html.dark textarea{color:#f2f2f7}
 .switch::after{content:"";position:absolute;width:25px;height:25px;border-radius:50%;background:#fff;top:2px;left:2px;transition:.25s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
 .switch.on::after{transform:translateX(19px)}
 
+/* ---------- 截图记账 ---------- */
+.scanwrap{padding:6px 16px 0;display:flex;justify-content:center}
+.scanimg{max-width:150px;max-height:250px;border-radius:13px;display:block;box-shadow:0 10px 24px -12px rgba(0,0,0,.55);border:1px solid var(--sep)}
+.scansteps{padding:12px 22px 0}
+.scanstep{display:flex;align-items:center;gap:9px;font-size:13px;line-height:1.4;padding:5px 0;color:var(--label3);transition:.25s}
+.scanstep .sd{width:16px;height:16px;border-radius:50%;flex:none;border:2px solid var(--label3);position:relative;transition:.2s}
+.scanstep.on{color:var(--label)}
+.scanstep.on .sd{border-color:var(--green);animation:pulse 1s infinite}
+.scanstep.done{color:var(--label2)}
+.scanstep.done .sd{border-color:var(--green);background:var(--green)}
+.scanstep.done .sd::after{content:"";position:absolute;left:4px;top:1px;width:4px;height:8px;border-right:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(40deg)}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(52,199,89,.45)}50%{box-shadow:0 0 0 5px rgba(52,199,89,0)}}
+.field{margin:0 16px 12px}
+.field>label{display:block;font-size:11.5px;font-weight:700;color:var(--label2);margin-bottom:6px}
+.finput{width:100%;padding:11px 13px;border-radius:12px;border:1px solid var(--sep);background:var(--bg);
+  font-size:15px;font-family:inherit;outline:none;color:var(--label);-webkit-appearance:none}
+.finput:focus{border-color:var(--green)}
+.finput.big{font-size:26px;font-weight:800;letter-spacing:-.8px;font-variant-numeric:tabular-nums}
+html.dark .finput{background:#2c2c2e;border-color:#3a3a3c}
+
+/* ---------- 首页 / 统计：每日视图 ---------- */
+.hero .row.three{gap:8px}
+.hero .row.three .chip{padding:8px 8px}
+.hero .row.three .chip b{font-size:13px;letter-spacing:-.3px}
+.hero .row.three .chip span{font-size:10.5px}
+.monthbar{display:flex;gap:8px;overflow-x:auto;padding:0 16px;margin-top:4px;scrollbar-width:none}
+.monthbar::-webkit-scrollbar{display:none}
+.monthbar button{flex:none;border:none;padding:7px 14px;border-radius:17px;font-size:12.5px;font-weight:600;
+  background:rgba(120,120,128,.14);color:var(--label);cursor:pointer;transition:.15s}
+.monthbar button:active{transform:scale(.95)}
+.monthbar button.on{background:var(--green);color:#fff;font-weight:700;box-shadow:0 6px 14px -8px rgba(52,199,89,.9)}
+.metrics{display:flex;gap:10px;margin:12px 16px 0}
+.metrics>div{flex:1;background:var(--card);border-radius:14px;padding:11px 12px;box-shadow:0 1px 2px rgba(0,0,0,.04);min-width:0}
+.metrics span{display:block;font-size:10.5px;color:var(--label2);font-weight:700;white-space:nowrap}
+.metrics b{display:block;font-size:16px;font-variant-numeric:tabular-nums;letter-spacing:-.4px;margin-top:2px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.daylist{margin:8px 16px 0;background:var(--card);border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.dayblock{border-bottom:.5px solid var(--sep)}
+.dayblock:last-child{border-bottom:none}
+.dayrow{display:flex;align-items:center;gap:11px;padding:9px 14px;cursor:pointer;transition:background .15s}
+.dayrow.zero{cursor:default}
+.dayrow:active{background:#f0f0f4}
+.dayrow.open{background:rgba(52,199,89,.07)}
+.dayrow .dnum{width:22px;flex:none;text-align:center;font-size:15px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.5px}
+.dayrow .dbody{flex:1;min-width:0}
+.dayrow .dline{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.dayrow .dname{font-size:12px;color:var(--label2);font-weight:600;display:flex;align-items:center;gap:6px}
+.dayrow .dcnt{font-style:normal;font-size:10px;color:var(--label3);background:rgba(120,120,128,.14);
+  padding:1px 5px;border-radius:6px;font-weight:700}
+.dayrow .damt{font-size:14.5px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.3px;flex:none}
+.dayrow .bar{height:5px;margin-top:5px}
+.dayrow.zero{padding:5px 14px}
+.dayrow.zero .bar{display:none}
+.dayrow.zero .dnum,.dayrow.zero .damt{color:var(--label3)}
+.dayrow.zero .dname{color:var(--label3)}
+.dayrow.zero .dcnt{background:none;padding:0}
+.daydetail{padding:2px 0 10px;background:rgba(120,120,128,.05)}
+.daydetail .txlist{margin:0 12px;box-shadow:none;background:var(--bg);border-radius:12px}
+html.dark .dayrow:active{background:#2c2c2e}
+
 .hint{color:var(--label2);font-size:12px;margin:8px 20px 0;line-height:1.45}
 .outside{color:#8b8b95;font-size:12px;max-width:420px;text-align:center;line-height:1.6;margin-top:6px}
 .outside kbd{background:rgba(255,255,255,.12);border-radius:4px;padding:1px 5px;font-size:11px;font-family:inherit;color:#dedee5}
@@ -407,13 +467,12 @@ const S = {
   tab:'home',
   imported:false,
   detailId:null,
-  statsView:'cat',
+  statsView:'day',   // day | cat | trend
   toggles:{billNotify:true, lock:true, dark:false},
   _scrollTop:0,
   demo:false,
   statsMonth:null,     // 统计页选中的月份 'YYYY-MM'，null=最新月
-  statsFrom:null,      // 统计起始日期 'YYYY-MM-DD'，null=不限
-  statsTo:null         // 统计结束日期 'YYYY-MM-DD'，null=不限
+  statsDay:null        // 统计页展开的那一天 'YYYY-MM-DD'
 };
 /* 首次打开：有存档用存档；没有则从空白开始，等用户导入真实账单 */
 (function initStore(){
@@ -446,22 +505,47 @@ const dayLabel = d => {
   const dt = new Date(d+'T00:00:00');
   return `${dt.getMonth()+1}月${dt.getDate()}日 周${'日一二三四五六'[dt.getDay()]}`;
 };
-function heroSpark(){
-  const vals=[86,142,60,210,38,96,72];
-  const w=64,h=26,mx=Math.max(...vals);
-  const pts = vals.map((v,i)=>`${(i/(vals.length-1)*w).toFixed(1)},${(h-v/mx*h+2).toFixed(1)}`).join(' ');
+/* 当前自然月：'YYYY-MM' */
+const curMonth = () => fmtTime(new Date()).slice(0,7);
+
+/* 首页迷你趋势：本月最近 7 天的每日支出（跨月不回溯，全部为 0 时不画） */
+function heroSpark(outList){
+  const today = new Date();
+  const days = [];
+  for(let i=6;i>=0;i--){
+    const d = new Date(today.getFullYear(), today.getMonth(), today.getDate()-i);
+    const key = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+    if(key.slice(0,7) !== curMonth()) continue;
+    days.push(key);
+  }
+  if(!days.length) return '';
+  const vals = days.map(k => total(outList.filter(t=>t.time.slice(0,10)===k)));
+  if(!vals.some(v=>v>0)) return '';
+  const w=64,h=26, mx=Math.max(...vals, 1), n=vals.length;
+  const y = v => (h - (v/mx)*(h-4) - 2).toFixed(1);
+  const pts = n===1
+    ? `0,${y(vals[0])} ${w},${y(vals[0])}`
+    : vals.map((v,i)=>`${(i/(n-1)*w).toFixed(1)},${y(v)}`).join(' ');
   return `<svg class="sparkline" width="${w}" height="${h}"><polyline points="${pts} ${w},${h} 0,${h}" fill="rgba(255,255,255,.18)" stroke="none"/><polyline points="${pts}" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 }
 function renderHome(){
-  const out = TX.filter(t=>t.dir==='out');
-  const inc = TX.filter(t=>t.dir==='in');
+  /* 首页是「本月」视图：金额、收支、流水都只算当前自然月 */
+  const mk = curMonth();
+  const mLabel = `${+(mk.slice(5,7))}月`;
+  const monthTX = TX.filter(t=>t.time.slice(0,7) === mk);
+  const out = monthTX.filter(t=>t.dir==='out');
+  const inc = monthTX.filter(t=>t.dir==='in');
   const outSum = total(out), incSum = total(inc);
-  const groups = groupByDay(TX);
+  const todayKey = fmtTime(new Date()).slice(0,10);
+  const todayTX = monthTX.filter(t=>t.time.slice(0,10) === todayKey);
+  const todayOut = total(todayTX.filter(t=>t.dir==='out'));
+  const groups = groupByDay(monthTX);
   const pending = TX.filter(t=>!t.cat).length;
+  const lastTx = TX.map(t=>t.time).sort().pop();
 
   let html = `
   <div class="nav">
-    <div><h1>肥鱼记账</h1><div class="sub">${homeSubtitle()}</div></div>
+    <div><h1>肥鱼记账</h1><div class="sub">${homeSubtitle(monthTX)}</div></div>
     <div class="navicons">
       <button class="iconbtn" data-act="search" title="搜索">${I.search}</button>
       <button class="iconbtn" data-act="open-source" title="导入账单">${I.cloud}</button>
@@ -470,19 +554,20 @@ function renderHome(){
 
   <div class="hero">
     <div class="halo"></div>
-    <div class="lbl">本月支出 <span class="badge">支付宝 + 微信</span></div>
-    <div class="big"><small>¥</small>${money(outSum)}</div>
-    <div class="row">
+    <div class="lbl">今日支出 <span class="badge">${+todayKey.slice(5,7)}月${+todayKey.slice(8,10)}日 · 支付宝 + 微信</span></div>
+    <div class="big"><small>¥</small>${money(todayOut)}</div>
+    ${todayTX.length===0? `<div style="font-size:12px;opacity:.85;margin-top:2px">今天还没有支出</div>`:''}
+    <div class="row three">
+      <div class="chip"><span>本月支出</span><b>¥${money(outSum)}</b></div>
       <div class="chip"><span>本月收入</span><b>+¥${money(incSum)}</b></div>
-      <div class="chip"><span>本月结余</span><b>¥${money(incSum-outSum)}</b></div>
+      <div class="chip"><span>结余</span><b>${incSum-outSum<0?'-':''}¥${money(Math.abs(incSum-outSum))}</b></div>
     </div>
-    ${heroSpark()}
+    ${heroSpark(out)}
   </div>
 
-  <div class="quick" style="grid-template-columns:repeat(5,1fr)">
+  <div class="quick" style="grid-template-columns:repeat(4,1fr)">
     <button data-act="add"><span class="qi" style="background:#0a84ff">${I.plus}</span>记一笔</button>
-    <button data-act="share-entry"><span class="qi" style="background:#07c160">${I.share}</span>分享记账</button>
-    <button data-act="scan"><span class="qi" style="background:#ff9500">${I.cam}</span>拍照小票</button>
+    <button data-act="shot-entry"><span class="qi" style="background:#07c160">${I.cam}</span>截图记账</button>
     <button data-act="stats"><span class="qi" style="background:#af52de">${I.chart}</span>看报表</button>
     <button data-act="act-export"><span class="qi" style="background:#34c759">${I.export}</span>导出备份</button>
   </div>
@@ -500,7 +585,8 @@ function renderHome(){
     </div>
   </div>
 
-  ${TX.length===0?`<div class="note info" style="margin-top:14px">${I.info}<p><b>还没有账单</b><br>点右上角的 ${'<span style="display:inline-block;vertical-align:-2px">☁️</span>'} 或下面的「支付宝 / 微信」卡片，选择导出的账单文件，自动识别、去重、分类。</p></div>`:''}
+  ${TX.length>0 && monthTX.length===0?`<div class="note info" style="margin-top:14px">${I.info}<p><b>${mLabel}还没有记录</b><br>最近一笔在 ${lastTx? `${+lastTx.slice(5,7)}月${+lastTx.slice(8,10)}日` : '—'}。上面只统计本月，其他月份去「看报表」里翻。</p></div>`:''}
+  ${TX.length===0?`<div class="note info" style="margin-top:14px">${I.info}<p><b>还没有账单</b><br>单笔最快：点上方「截图记账」，选一张账单截图；<br>整月批量：点右上角的 ${'<span style="display:inline-block;vertical-align:-2px">☁️</span>'} 或下面的「支付宝 / 微信」卡片，导入导出的账单文件。</p></div>`:''}
   ${pending?`<div class="note" style="margin-top:14px;cursor:pointer" data-act="open-uncat">${I.info}<p><b>有 ${pending} 笔待分类 →</b><br>无法从商户名判断的记录已标记出来，点这里逐个补上。</p></div>`:''}
   `;
 
@@ -511,7 +597,7 @@ function renderHome(){
     for(const t of list){ html += txRow(t); shown++; }
     html += `</div></div>`;
   }
-  html += `<div class="hint">共 ${TX.length} 笔 · 点任意一笔查看详情</div>`;
+  html += `<div class="hint">${monthTX.length? `本月 ${monthTX.length} 笔 · 点任意一笔查看详情` : '本月还没有记录'}</div>`;
   return html;
 }
 
@@ -524,16 +610,11 @@ function srcInfo(src){
   return { has:true, text:`${list.length} 笔 · 最近 ${d}`, count:list.length };
 }
 
-/* 首页副标题：按真实数据生成，不写死 */
-function homeSubtitle(){
-  if(!TX.length) return '还没有账单';
-  const times = TX.map(t=>t.time).sort();
-  const first = times[0].slice(0,10), last = times[times.length-1].slice(0,10);
-  const fmt = s => `${+s.slice(5,7)}月${+s.slice(8,10)}日`;
-  if(first.slice(0,7) === last.slice(0,7)){
-    return `${first.slice(0,4)}年${first.slice(5,7)}月 · ${fmt(first)} - ${fmt(last)}`;
-  }
-  return `${first} 至 ${last}`;
+/* 首页副标题：本月口径（几笔 / 或本月空） */
+function homeSubtitle(monthTX){
+  const m = +curMonth().slice(5,7);
+  if(!monthTX.length) return `${m}月 · 还没有记录`;
+  return `${m}月 · ${monthTX.length} 笔`;
 }
 
 /* ====================== 页面：待分类 ====================== */
@@ -616,17 +697,8 @@ function renderStats(){
     return `<div class="nav"><div><h1>统计</h1></div><div class="navicons"><button class="iconbtn" data-act="go-home">${I.home}</button></div></div>
       <div class="hint" style="text-align:center;margin-top:60px">还没有账单可统计</div>`;
   }
-  // 筛选条件：设了起止日期就按日期范围，否则按整月
-  const hasRange = !!(S.statsFrom || S.statsTo);
-  const from = S.statsFrom || (hasRange ? '0000-01-01' : ym + '-01');
-  const to   = S.statsTo   || (hasRange ? '9999-12-31' : ym + '-31');
-  const monthTx = TX.filter(t=>{
-    const d = t.time.slice(0,10);
-    return d >= from && d <= to;
-  });
-  const rangeText = hasRange
-    ? `${S.statsFrom || '最早'} 至 ${S.statsTo || '最新'}`
-    : monthLabel(ym);
+  const y = +ym.slice(0,4), mi = +ym.slice(5,7);
+  const monthTx = TX.filter(t=>t.time.slice(0,7) === ym);
   const out = monthTx.filter(t=>t.dir==='out');
   const inc = monthTx.filter(t=>t.dir==='in');
   const sum = total(out);
@@ -638,19 +710,56 @@ function renderStats(){
   const cmpText = !hasPrev ? '上月无记录'
     : (diffPct >= 0 ? `较上月 ↑ ${diffPct.toFixed(1)}%` : `较上月 ↓ ${Math.abs(diffPct).toFixed(1)}%`);
 
+  /* ---------- 每日汇总：整月每一天，含没有记录的天 ---------- */
+  const daysInMonth = new Date(y, mi, 0).getDate();
+  const days = [];
+  for(let d=1; d<=daysInMonth; d++){
+    const key = `${ym}-${pad(d)}`;
+    const list = monthTx.filter(t=>t.time.slice(0,10)===key);
+    days.push({ d, key, list, out: total(list.filter(t=>t.dir==='out')), inc: total(list.filter(t=>t.dir==='in')) });
+  }
+  const maxDay = Math.max(1, ...days.map(x=>x.out));
+  const activeDays = days.filter(x=>x.out>0).length;
+  const avg = activeDays ? sum/activeDays : 0;
+  const peak = [...days].sort((a,b)=>b.out-a.out)[0] || { out:0, d:1 };
+  const wkOf = key => '日一二三四五六'[new Date(key+'T00:00:00').getDay()];
+
+  const dayBlocks = days.map(x=>{
+    const has = x.list.length > 0;
+    const open = S.statsDay === x.key;
+    const pct = x.out ? Math.max(x.out/maxDay*100, 4) : 0;
+    const amt = x.out ? `¥${money(x.out)}` : (x.inc ? `+¥${money(x.inc)}` : '—');
+    return `<div class="dayblock">
+      <div class="dayrow ${has?'':'zero'} ${open?'open':''}" ${has?`data-act="pick-day" data-day="${x.key}"`:''}>
+        <div class="dnum">${x.d}</div>
+        <div class="dbody">
+          <div class="dline">
+            <span class="dname">周${wkOf(x.key)}<i class="dcnt">${has? x.list.length+' 笔' : '无记录'}</i></span>
+            <b class="damt">${amt}</b>
+          </div>
+          <div class="bar"><i style="width:${pct}%;background:linear-gradient(90deg,#34c759,#22b06a)"></i></div>
+        </div>
+        ${has? `<span class="chev" style="opacity:.5;transform:rotate(${open?'225deg':'45deg'})"></span>`:''}
+      </div>
+      ${open && has ? `<div class="daydetail"><div class="txlist">${[...x.list].sort((a,b)=>a.time<b.time?1:-1).map(txRow).join('')}</div></div>` : ''}
+    </div>`;
+  }).join('');
+
+  /* ---------- 分类占比 ---------- */
   const byCat = {};
-  out.forEach(t=>{ const k=t.cat||'other'; byCat[k]=(byCat[k]||0)+t.amount; });
-  const rows = Object.entries(byCat).map(([k,v])=>({k,v,c:catById(k)})).sort((a,b)=>b.v-a.v);
-  const R=88, C=2*Math.PI*R;
-  let off=0;
+  out.forEach(t=>{ const k = t.cat || 'other'; byCat[k] = (byCat[k]||0) + t.amount; });
+  const rows = Object.entries(byCat).map(([k,v])=>({ k, v, c: catById(k) })).sort((a,b)=>b.v-a.v);
+  const R = 88, C = 2*Math.PI*R;
+  let off = 0;
   const arcs = rows.map(r=>{
     const len = sum>0 ? C*(r.v/sum) : 0;
     const el = `<circle cx="98" cy="98" r="${R}" fill="none" stroke="${catColor(r.k)}" stroke-width="20"
       stroke-dasharray="${Math.max(len-4,0.1)} ${C-len+4}" stroke-dashoffset="${-off}"/>`;
     off += len; return el;
   }).join('');
+  const topCat = rows.length ? rows[0].v : 1;
 
-  // 趋势：有记录的最近 6 个月
+  /* ---------- 月度趋势 ---------- */
   const months = availableMonths().slice(0,6).reverse();
   const trend = months.map(m=>({ m, v: total(TX.filter(t=>t.time.slice(0,7)===m && t.dir==='out')) }));
   const tmax = Math.max(1, ...trend.map(t=>t.v));
@@ -660,55 +769,46 @@ function renderStats(){
       <div style="font-size:11px;color:${t.m===ym?'var(--label)':'var(--label2)'};font-weight:600">${+t.m.slice(5)}月</div>
     </div>`).join('');
 
-  // 紧凑筛选条：年月 + 起止日期
   const allMonths = availableMonths();
   const curIdx = allMonths.indexOf(ym);
-  const canPrev = curIdx < allMonths.length-1;   // 更早
-  const canNext = curIdx > 0;                    // 更晚
-
-  const dInput = (id, val, label) => `
-    <label style="flex:1;display:flex;flex-direction:column;gap:3px">
-      <span style="font-size:10px;color:var(--label2);font-weight:700">${label}</span>
-      <input id="${id}" type="date" value="${val||''}"
-        style="width:100%;border:none;outline:none;background:transparent;font-size:13px;font-weight:600;color:var(--label);font-family:inherit;min-width:0">
-    </label>`;
-
-  const sel = `
-  <div style="margin:0 16px;background:var(--card);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:10px">
-    <div style="display:flex;gap:8px;overflow-x:auto;scrollbar-width:none">
-      <button data-act="pick-month" data-month="${ym}"
-        style="flex:none;border:none;padding:7px 13px;border-radius:17px;font-size:12.5px;font-weight:700;background:#34c759;color:#fff">${monthLabel(ym)}</button>
-      ${availableMonths().filter(m=>m!==ym).slice(0,4).map(m=>`<button data-act="pick-month" data-month="${m}"
-        style="flex:none;border:none;padding:7px 13px;border-radius:17px;font-size:12.5px;font-weight:600;cursor:pointer;background:rgba(120,120,128,.14);color:var(--label)">${monthLabel(m)}</button>`).join('')}
-    </div>
-    <div style="display:flex;align-items:center;gap:8px;border-top:.5px solid var(--sep);padding-top:10px">
-      ${dInput('dtFrom', S.statsFrom, '开始日期')}
-      <span style="color:var(--label3);font-weight:700;padding-top:12px">→</span>
-      ${dInput('dtTo', S.statsTo, '结束日期')}
-      <button data-act="clear-range"
-        style="flex:none;border:none;background:rgba(120,120,128,.14);color:var(--label);font-size:12px;font-weight:700;padding:8px 11px;border-radius:15px;margin-top:12px;cursor:pointer">清除</button>
-    </div>
-  </div>`;
+  const canPrev = curIdx < allMonths.length-1;
+  const canNext = curIdx > 0;
 
   return `
   <div class="nav">
-    <div><h1>统计</h1><div class="sub">${rangeText} · 共 ${monthTx.length} 笔</div></div>
+    <div><h1>统计</h1><div class="sub">${monthLabel(ym)} · ${monthTx.length} 笔 · ${activeDays} 天有支出</div></div>
     <div class="navicons">
       <button class="iconbtn" data-act="prev-month" title="上个月" ${canPrev?'':'style="opacity:.3"'}>${I.back}</button>
-      <button class="iconbtn" data-act="next-month" title="下个月" ${canNext?'':'style="opacity:.3"'} ${canNext?'style="opacity:.3;transform:scaleX(-1)"':'style="transform:scaleX(-1)"'}>${I.back}</button>
+      <button class="iconbtn" data-act="next-month" title="下个月" style="transform:scaleX(-1)${canNext?'':';opacity:.3'}">${I.back}</button>
     </div>
   </div>
-  ${sel}
-  <div class="seg" style="margin-top:10px">
+
+  <div class="monthbar">
+    ${allMonths.map(m=>`<button data-act="pick-month" data-month="${m}" class="${m===ym?'on':''}">${m.slice(0,4)===String(new Date().getFullYear())? '' : m.slice(2,4)+'年'}${+m.slice(5)}月</button>`).join('')}
+  </div>
+
+  <div class="seg" style="margin-top:12px">
+    <button class="${S.statsView==='day'?'on':''}" data-act="view-day">按天</button>
     <button class="${S.statsView==='cat'?'on':''}" data-act="view-cat">分类</button>
     <button class="${S.statsView==='trend'?'on':''}" data-act="view-trend">趋势</button>
   </div>
-  ${S.statsView==='cat'?`
+
+  ${S.statsView==='day'?`
+  <div class="metrics">
+    <div><span>${mi}月支出</span><b>¥${money(sum)}</b></div>
+    <div><span>日均 · ${activeDays}天</span><b>¥${money(avg)}</b></div>
+    <div><span>最高 ${peak.out? peak.d+'日' : '单日'}</span><b>¥${money(peak.out||0)}</b></div>
+  </div>
+  <div class="hint" style="margin:10px 20px 6px">点任意一天，展开当天每一笔。</div>
+  ${monthTx.length? `<div class="daylist">${dayBlocks}</div>`
+    : `<div class="hint" style="text-align:center;margin-top:40px">${mi}月还没有记录</div>`}
+  <div style="height:6px"></div>
+  `: S.statsView==='cat'?`
   <div class="donutwrap">
     <div class="donut">
       <svg width="196" height="196" viewBox="0 0 196 196">${arcs}</svg>
       <div class="center"><div>
-        <div class="cl">本月支出</div>
+        <div class="cl">${mi}月支出</div>
         <div class="cv">¥${money(sum)}</div>
         <div class="cl" style="margin-top:4px">${cmpText}</div>
       </div></div>
@@ -720,15 +820,15 @@ function renderStats(){
       <span class="cdot" style="background:${catColor(r.k)}"></span>
       <div style="flex:1">
         <div style="display:flex;align-items:baseline;justify-content:space-between"><span class="cn">${catIcon(r.k)} ${r.c.name}</span><span class="cp">${(r.v/sum*100).toFixed(1)}%</span></div>
-        <div class="bar"><i style="width:${r.v/rows[0].v*100}%;background:${catColor(r.k)}"></i></div>
+        <div class="bar"><i style="width:${r.v/topCat*100}%;background:${catColor(r.k)}"></i></div>
       </div>
       <span class="ca">¥${money(r.v)}</span>
-    </div>`).join('')}
+    </div>`).join('') || '<div class="hint" style="padding:16px;text-align:center">这个月没有支出</div>'}
   </div>
-  <div class="section-title"><span>本月收入</span></div>
+  <div class="section-title"><span>${mi}月收入</span></div>
   <div class="card pad" style="line-height:1.6">
     ${inc.length? `共 ${inc.length} 笔 · 合计 <b style="color:var(--green)">¥${money(total(inc))}</b>`
-      : '本月没有收入记录'}
+      : '这个月没有收入记录'}
   </div>
   <div class="hint">点分类可按该分类筛选每一笔交易。</div>
   `:`
@@ -736,7 +836,7 @@ function renderStats(){
   <div class="card pad" style="padding:18px 14px">
     <div style="display:flex;gap:8px;align-items:flex-end">${bars}</div>
   </div>
-  <div class="section-title"><span>各月明细</span></div>
+  <div class="section-title"><span>各月明细</span><span>点一下切到该月</span></div>
   <div class="dedup">
     ${trend.map(t=>`<div class="drow" data-act="pick-month" data-month="${t.m}" style="cursor:pointer">
       <span style="${t.m===ym?'color:var(--green);font-weight:700':''}">${monthLabel(t.m)}</span><b>¥${money(t.v)}</b></div>`).join('')}
@@ -751,7 +851,15 @@ function renderImport(){
     <div><h1 style="font-size:24px">导入账单</h1><div class="sub">支持支付宝、微信官方导出文件</div></div>
     <div class="navicons"><button class="iconbtn" data-act="go-home">${I.home}</button></div>
   </div>
-  <div class="note info">${I.info}<p><b>为什么是“导入”而不是“自动同步”？</b><br>微信和支付宝没有向第三方 App 开放个人账单接口，App Store 上所有「自动记账」工具，本质上都是在<b>读取你导出的账单文件</b>。导入一次 1 分钟，之后每次只导入新增部分、自动去重。</p></div>
+  <div class="note info">${I.info}<p><b>为什么是「导入」而不是「自动同步」？</b><br>微信和支付宝没有向第三方 App 开放个人账单接口，App Store 上所有「自动记账」工具，本质上都是在<b>读取你导出的账单文件</b>。导入一次 1 分钟，之后每次只导入新增部分、自动去重。</p></div>
+
+  <div class="section-title"><span>只记一两笔？用截图更快</span></div>
+  <div class="steps">
+    <div class="step"><span class="n">1</span><div><b>在账单详情页截一张图</b><p>微信：账单 → 点进某笔 → 截屏<br>支付宝：账单 → 点进某笔 → 截屏</p></div></div>
+    <div class="step"><span class="n">2</span><div><b>选进 App，自动填好</b><p>金额、商户、时间、交易单号、来源一次识别，<em>本机完成</em></p></div></div>
+  </div>
+  <button class="bigbtn ghost" data-act="shot-entry" style="margin-top:10px">${I.cam} 截图记账</button>
+  <div class="mini-help">支付成功页没有分享按钮、文字也选不中，所以走截图这条路。</div>
 
   <div class="section-title"><span>① 支付宝：导出交易明细</span></div>
   <div class="steps">
@@ -986,6 +1094,7 @@ function renderMine(){
     ['tag','分类与标签','编辑分类和子类，图标颜色','#ff9500','act-cats'],
     ['rule','自动分类规则','按商户 / 关键词自动归类','#34c759','act-rules'],
     ['sync','账单来源','微信支付 · 支付宝','#0a84ff','open-source'],
+    ['cam','截图记账','从相册选账单截图，自动填好字段','#ff9500','shot-entry'],
     ['bell','待分类提醒','有无法自动分类的记录时提醒',null,'toggle-billNotify'],
     ['lock','Face ID 锁','打开 App 需面容解锁',null,'toggle-lock'],
     ['sun','深色外观','跟随系统 / 手动切换',null,'toggle-dark'],
@@ -1190,14 +1299,6 @@ function rerender(keepScroll){
   renderTabbar(); renderPage();
 }
 
-/* 统计页日期范围输入：用事件委托，只要还在统计页就一直有效 */
-document.addEventListener('change', e=>{
-  if(S.tab!=='stats') return;
-  const id = e.target.id;
-  if(id==='dtFrom'){ S.statsFrom = e.target.value || null; rerender(true); }
-  if(id==='dtTo'){   S.statsTo   = e.target.value || null; rerender(true); }
-});
-
 /* ====================== 交互 ====================== */
 let toastTimer;
 function toast(msg){
@@ -1345,11 +1446,11 @@ function pickSub(cat, text){
 }
 
 /* ===== 手动记一笔 ===== */
-function renderManualSheet(forScan){
+function renderManualSheet(){
   return `
   <div class="grab"></div>
-  <div class="stitle">${forScan?'识别小票':'记一笔'}</div>
-  <div class="ssub">${forScan?'拍照识别的功能需要用到手机相机，这里先用手动输入代替':'手动录入一笔账，保存到本机'}</div>
+  <div class="stitle">记一笔</div>
+  <div class="ssub">手动录入一笔账，保存到本机</div>
   <div style="padding:0 16px">
     <div style="font-size:12px;font-weight:700;color:var(--label2);margin-bottom:6px">金额</div>
     <input id="mAmt" type="text" inputmode="decimal" placeholder="0.00"
@@ -1443,123 +1544,321 @@ function doSearch(kw){
     <div class="txlist" style="margin:0 16px">${list.map(txRow).join('')}</div>`;
 }
 
-/* ===== 支付完成页分享解析 =====
-   从微信/支付宝的支付成功页分享出来的文字里，提取金额、商户、时间。
-   iOS 的分享菜单会通过 navigator.share / Web Share Target 把文本传进来。 */
+/* ==================== 截图记账 ====================
+   现实约束：微信的「账单 / 支付成功」页、支付宝的「账单详情」页都没有任何分享入口，
+   账单里的文字也不能长按选中复制 —— 所以「从支付页分享一笔过来」这条路根本不成立。
+   真正能落地的只有两条：
+     A. 截图 → 系统「实况文本」长按取字 → 复制 → 粘贴进 App（走 paste 解析，无需 OCR）
+     B. App 内直接读相册截图做 OCR（iOS Vision / MLKit 本地识别，原型里用两张真实账单样本演示）
+*/
 
-/* 从一段自由文本中解析出账单要素：金额、商户、收支、来源、时间 */
-function parseSharedText(raw){
+/* 截图里自带的官方分类，优先采用 */
+const BILL_CAT_MAP = [
+  [/餐饮|美食|食品|咖啡|茶饮/, 'food'],
+  [/交通|出行|打车|地铁|公交|加油|机票|火车/, 'traf'],
+  [/日用|百货|购物|服饰|数码|美妆|家电|母婴/, 'shop'],
+  [/生活|缴费|水电|燃气|话费|宽带|房租|物业/, 'life'],
+  [/娱乐|休闲|影音|游戏|会员|旅行|酒店|电影/, 'fun'],
+  [/医疗|健康|药品|药|医院|体检/, 'health'],
+  [/学习|教育|图书|培训|考试|学费|学校|学院/, 'learn'],
+  [/转账|红包|人情|收款/, 'other']
+];
+/* 这些行是标签，不能当商户名 */
+const BILL_LABEL = /^(账单|账单详情|账单管理|当前状态|支付时间|付款方式|支付方式|商品|商品说明|商户全称|商户名称|收单机构|清算机构|订单号|商户单号|交易单号|交易号|支付奖励|标签|账单分类|交易成功|支付成功|全部账单|账单服务|商家小程序|服务|备注)$/;
+/* 以字段名开头的整行（OCR 常把标签和值挤在同一行），不能当商户名 */
+const BILL_PREFIX = /^(商品|商户|收单|清算|订单|交易单号|商户单号|支付时间|付款方式|支付方式|当前状态|账单|标签|商家|服务|参考|备注|说明|状态|全部账单|主账单)/;
+
+/* 从 OCR / 粘贴文本里提取一笔账：金额、商户、时间、来源、单号、分类 */
+function parseBillText(raw){
   if(!raw) return null;
-  const text = String(raw).replace(/\r/g,'');
-  const lines = text.split('\n').map(s=>s.trim()).filter(Boolean);
+  const text = String(raw).replace(/\r/g,'').replace(/[\u00a0\u3000]/g,' ');
+  /* OCR 常把中文逐字拆开（「支 付 时 间」），先把汉字之间的空格合掉再匹配 */
+  const norm = s => {
+    let t = s.trim(), guard = 0;
+    while(guard++ < 6 && /[\u4e00-\u9fa5]\s+[\u4e00-\u9fa5]/.test(t)) t = t.replace(/([\u4e00-\u9fa5])\s+([\u4e00-\u9fa5])/g,'$1$2');
+    return t.replace(/\s{2,}/g,' ');
+  };
+  const lines = text.split('\n').map(norm).filter(Boolean);
+  if(!lines.length) return null;
   const joined = lines.join('\n');
 
-  // 金额
-  let amount = null;
-  const amtRe = [
-    /(?:支付金额|付款金额|实付金额|实付|金额|总计)[:：\s]*([\d,]+\.?\d*)/i,
-    /(?:¥|￥|RMB)\s*([\d,]+\.?\d*)/i,
-    /([\d,]+\.\d{2})\s*元/,
-    /\b([\d,]+\.\d{2})\b/
-  ];
-  for(const re of amtRe){
-    const m = joined.match(re);
-    if(m){
-      const v = parseFloat(m[1].replace(/,/g,''));
-      if(isFinite(v) && v > 0){ amount = Math.round(v*100)/100; break; }
+  /* --- 1. 金额：优先找「独占一行的数字」，负数代表支出 --- */
+  let amount = null, amtIdx = -1, negative = false;
+  for(let i=0;i<lines.length;i++){
+    const m = lines[i].match(/^([+\-−＋]?)\s*[¥￥]?\s*(\d{1,3}(?:,\d{3})*(?:\.\d{1,2})?|\d+(?:\.\d{1,2})?)\s*元?$/);
+    if(!m || !m[2]) continue;
+    const numStr = m[2].replace(/,/g,'');
+    const digits = numStr.replace(/\./g,'');
+    // 一整行只有一长串数字 → 那是订单号/流水号，不是金额
+    if(digits.length > 7) continue;
+    if(numStr.indexOf('.') < 0 && digits.length > 5) continue;
+    const v = parseFloat(numStr);
+    if(isFinite(v) && v > 0){
+      amount = Math.round(v*100)/100;
+      negative = /[-−]/.test(m[1]);
+      amtIdx = i;
+      break;
     }
   }
-  if(!amount) return null;
-
-  // 商户
-  let merchant = '';
-  const m1 = joined.match(/向\s*([^\n，,。;；]{2,30}?)\s*(?:的)?(?:收款码|商户|店铺)?\s*(?:付款|转账|支付)/);
-  if(m1) merchant = m1[1].trim();
-  if(!merchant){
-    const m2 = joined.match(/(?:商户名称|收款方|商家|店铺|商户|交易对方)[:：]\s*([^\n，,。;；]{2,30})/);
-    if(m2) merchant = m2[1].trim();
+  if(amount === null){
+    const regs = [
+      /(?:支付金额|付款金额|实付金额|实付|交易金额|金额|总计|合计)[:：\s]*[¥￥]?\s*([\d,]+(?:\.\d{1,2})?)/,
+      /[¥￥]\s*([\d,]+(?:\.\d{1,2})?)/
+    ];
+    for(const re of regs){
+      const m = joined.match(re);
+      if(m){ const v = parseFloat(m[1].replace(/,/g,'')); if(isFinite(v) && v>0){ amount = Math.round(v*100)/100; break; } }
+    }
   }
-  if(!merchant){
-    const bad = /成功|完成|账单|详情|通知|说明|方式|时间|状态|金额|零钱|余额宝|花呗|银行卡|储蓄卡|信用卡|亲属卡|小荷包|美团小程序|已存入|已到账/;
-    const cand = lines.find(l=>l.length>=2 && l.length<=24 && !bad.test(l) && !/^[\d¥￥]/.test(l));
-    if(cand) merchant = cand;
-  }
-  if(merchant){
-    merchant = merchant.replace(/有限公司|股份有限|企业管理/g,'')
-      .replace(/^[::\s]+|[:\s]+$/g,'').trim();
-  }
-  if(!merchant) merchant = '未知商户';
 
-  // 来源与收支
-  let src = 'manual';
-  if(/微信|WeChat/.test(joined)) src = 'wx';
-  else if(/支付宝|花呗|余额宝|Alipay/.test(joined)) src = 'ali';
-  let dir = 'out';
-  if(/收款成功|已收款|收款到账|已入账|收入/.test(joined)) dir = 'in';
-
-  // 时间
+  /* --- 2. 时间：支持 2026-10-21 14:30:19 / 2026年10月21日 15:19:16 --- */
   let time = null;
-  const tm = joined.match(/(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})\s*(\d{1,2})[:：](\d{2})/);
+  const tm = joined.match(/(\d{4})\s*[-/.年]\s*(\d{1,2})\s*[-/.月]\s*(\d{1,2})\s*日?\s*(\d{1,2})[:：](\d{2})(?:[:：](\d{2}))?/);
   if(tm){
     const p = n => String(n).padStart(2,'0');
-    time = tm[1]+'-'+p(tm[2])+'-'+p(tm[3])+' '+p(tm[4])+':'+p(tm[5])+':00';
+    time = `${tm[1]}-${p(tm[2])}-${p(tm[3])} ${p(tm[4])}:${tm[5]}:${tm[6] || '00'}`;
   }
-  if(!time) time = fmtTime(new Date());
 
-  return { merchant: merchant.slice(0,30), amount, dir, src, time, product:'', type:'分享记账', note:'' };
+  /* --- 3. 商户：金额上面那一行（两家 App 的版式都是「商户名 / 金额 / 状态」） --- */
+  let merchant = '';
+  if(amtIdx > 0){
+    for(let i = amtIdx-1; i >= 0 && i >= amtIdx-3; i--){
+      const l = lines[i];
+      if(l.length >= 2 && l.length <= 30 && !BILL_LABEL.test(l) && !BILL_PREFIX.test(l) && !/^[\d¥￥+\-−]/.test(l)){ merchant = l; break; }
+    }
+  }
+  if(!merchant){
+    // OCR 有时会漏掉金额那行，用「交易成功 / 支付成功」上一行兜底
+    const sIdx = lines.findIndex(l => /^(交易成功|支付成功|付款成功|已支付)$/.test(l) || /^(当前状态|交易状态)/.test(l));
+    if(sIdx > 0){
+      for(let i = sIdx-1; i >= 0 && i >= sIdx-3; i--){
+        const l = lines[i];
+        if(l.length >= 2 && l.length <= 30 && !BILL_LABEL.test(l) && !BILL_PREFIX.test(l) && !/^[\d¥￥+\-−]/.test(l)){ merchant = l; break; }
+      }
+    }
+  }
+  if(!merchant){
+    const m = joined.match(/(?:商户全称|商户名称|收款方|收款单位|交易对方|商家名称)[:：]?\s*([^\n]{2,30})/);
+    if(m) merchant = m[1].trim();
+  }
+  if(!merchant){
+    const cand = lines.find(l => l.length>=2 && l.length<=24 && !BILL_LABEL.test(l) && !BILL_PREFIX.test(l) && !/^[\d¥￥+\-−]/.test(l) && !/成功|完成|详情/.test(l));
+    if(cand) merchant = cand;
+  }
+  merchant = (merchant || '未知商户')
+    .replace(/^[向给]\s*/, '')
+    .replace(/\s*(付款|支付|转账|收款|的收款码|收款码)$/, '')
+    .replace(/^[：:\s]+|[：:\s]+$/g,'').slice(0,30);
+  if(!merchant) merchant = '未知商户';
+
+  /* --- 4. 单号 / 商品说明 / 官方分类 --- */
+  const om = joined.match(/(?:交易单号|商户单号|订单号|交易号|流水号)[:：]?[^\n]{0,6}?([A-Za-z0-9]{8,40})/);
+  const order = om ? om[1] : '';
+  const pm = joined.match(/(?:商品说明|商品|付款说明)[:：]?\s*([^\n]{2,40})/);
+  // 商品说明后面常跟着一串订单号，去掉尾部的长数字
+  const product = pm ? pm[1].trim().replace(/\s*\d{8,}\s*$/,'') : '';
+  const cm = joined.match(/(?:账单分类|分类)[:：]?\s*([^\n]{2,12})/);
+  let bcat = null;
+  if(cm){ for(const [re, id] of BILL_CAT_MAP){ if(re.test(cm[1])){ bcat = id; break; } } }
+
+  /* --- 5. 来源与收支方向 --- */
+  let src = 'manual';
+  if(/微信|零钱|商户单号|WeChat/i.test(joined)) src = 'wx';
+  if(/支付宝|花呗|余额宝|小荷包|余额|Alipay/i.test(joined)) src = 'ali';
+  let dir = negative ? 'out' : 'out';
+  if(/收款成功|已收款|收款到账|已到账|退款成功|退款到账|入账/.test(joined)) dir = 'in';
+
+  /* --- 6. 交易类型 --- */
+  let type = '商户消费';
+  if(/退款成功|退款到账|已退款|退货退款|退回/.test(joined)) type = '退款';
+  else if(/转账/.test(joined)) type = '转账';
+  else if(/缴费|电费|水费|燃气费|话费/.test(joined)) type = '生活缴费';
+  else if(/自动扣费|自动续费|扣费/.test(joined)) type = '自动扣费';
+
+  if(!amount && !merchant) return null;
+  return {
+    merchant: merchant || '未知商户',
+    amount: amount || null,          // 读不出金额时给 null，确认页里手填
+    missingAmount: !amount,
+    dir, src, type, product, order,
+    time: time || fmtTime(new Date()),
+    cat: bcat, sub: null, note:''
+  };
 }
 
-/* ===== 分享记账：确认卡 ===== */
-function renderShareSheet(p){
-  const c = p.cat ? catById(p.cat) : null;
+/* ---------- 状态 ---------- */
+let SHOT = { img:null, ocr:'', p:null, cat:null, dir:'out', src:'wx' };
+
+/* ---------- 入口 ---------- */
+function renderShotSheet(){
   return `
   <div class="grab"></div>
-  <div class="stitle">识别到一笔${p.dir==='in'?'收款':'付款'}</div>
-  <div class="ssub">来自分享的支付页面 · 请核对</div>
-  <div class="detail-hero" style="margin:0 16px;box-shadow:none;background:#fafafa;border:1px solid var(--sep)">
-    <div style="font-size:12.5px;color:var(--label2);font-weight:600">${p.dir==='in'?'收入':'支出'} · ${srcName(p.src)}</div>
-    <div class="amt" style="color:${p.dir==='in'?'var(--green)':'var(--label)'}">${p.dir==='in'?'+':'-'}¥${money(p.amount)}</div>
-    <div class="merchant">${esc(p.merchant)}</div>
-    ${c?`<div class="catpill" style="background:${catColor(c.id)+'22'};color:${catColor(c.id)}">${catIcon(c.id)} ${c.name}</div>`:''}
+  <div class="stitle">截图记账</div>
+  <div class="ssub">在微信 / 支付宝的账单页截一张图，读成金额、商户、时间。</div>
+  <div class="note info" style="margin:0 16px 14px">${I.info}<p><b>为什么是截图，不是分享？</b><br>这两个 App 的支付成功页、账单详情页都<b>没有分享按钮</b>，文字也不能长按选中复制，只能读截图。</p></div>
+  <input type="file" id="shotFile" accept="image/*" style="display:none">
+  <button class="bigbtn" data-act="shot-pick">${I.cam} 从相册选择截图</button>
+  <button class="bigbtn ghost" data-act="shot-paste" style="margin-top:12px">${I.file} 粘贴截图里的文字</button>
+  <div class="mini-help" style="margin-bottom:8px">一张截图 = 一笔账，整月账单请用「导入账单」。<br>网页版没有 OCR 引擎：选完图把截图文字粘一下即可；原生 App 里是自动的。</div>
+  `;
+}
+
+/* ---------- 识别中 ---------- */
+function renderShotScanning(view, steps){
+  return `
+  <div class="grab"></div>
+  <div class="scanwrap">${view || `<div class="scanimg" style="width:126px;height:126px;display:grid;place-items:center;color:var(--label2);background:rgba(120,120,128,.1);box-shadow:none">${I.file}</div>`}</div>
+  <div class="stitle center" style="padding:14px 18px 2px">正在识别</div>
+  <div class="ssub center" style="padding-bottom:2px">本机处理 · 不上传</div>
+  <div class="scansteps">
+    ${steps.map(s=>`<div class="scanstep"><span class="sd"></span>${s}</div>`).join('')}
   </div>
-  <div class="infocard" style="margin-top:12px">
-    <div class="inforow"><span>时间</span><b>${p.time}</b></div>
-    ${p.product?`<div class="inforow"><span>商品</span><b>${esc(p.product)}</b></div>`:''}
-    <div class="inforow"><span>分类</span><b style="color:${c?'var(--label)':'var(--orange)'}">${c?c.name+'（自动）':'待分类'}</b></div>
+  <div style="height:16px"></div>
+  `;
+}
+function runShotScan(view, ocr){
+  const steps = ['读取截图','识别文字','提取金额 / 商户 / 时间','匹配分类'];
+  openSheet(renderShotScanning(view, steps));
+  steps.forEach((_, i) => {
+    setTimeout(() => {
+      const list = document.querySelectorAll('#sheet .scanstep');
+      const el = list[i]; if(!el) return;
+      el.classList.add('on');
+      setTimeout(() => { el.classList.remove('on'); el.classList.add('done'); }, 240);
+    }, 220 + i*340);
+  });
+  setTimeout(() => {
+    const p = parseBillText(ocr);
+    if(!p){ openSheet(renderShotFail()); return; }
+    SHOT.ocr = ocr; SHOT.p = p;
+    SHOT.cat = p.cat || autoCategorize(p.merchant, p.type, p.product);
+    SHOT.dir = p.dir;
+    SHOT.src = p.src === 'manual' ? (SHOT.src || 'wx') : p.src;
+    openSheet(renderShotConfirm(p));
+    if(p.missingAmount) setTimeout(()=>{ const b=document.getElementById('shAmt'); if(b) b.focus(); }, 420);
+  }, 220 + steps.length*340 + 320);
+}
+function renderShotFail(){
+  return `
+  <div class="grab"></div>
+  <div class="okico" style="background:rgba(255,149,0,.14)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#ff9500" stroke-width="2.2" stroke-linecap="round"><path d="M12 8v5M12 16v.5"/><circle cx="12" cy="12" r="9"/></svg>
   </div>
-  <button class="bigbtn" data-act="share-save">${I.check} 确认记账 ¥${money(p.amount)}</button>
-  <button class="bigbtn ghost" data-act="share-edit" style="margin-top:10px">改分类再存</button>
+  <div class="stitle center" style="padding-bottom:2px">没读出金额</div>
+  <div class="ssub center" style="padding-bottom:14px">截图里要能看到金额那一行大字。<br>也可以只把金额附近的几行文字粘进来。</div>
+  <button class="bigbtn ghost" data-act="shot-paste">改成粘贴文字</button>
+  <button class="bigbtn ghost" data-act="shot-again" style="margin-top:10px;margin-bottom:6px">换一张</button>
+  `;
+}
+
+/* ---------- 粘贴文字（相册实况文本 / 系统 OCR） ---------- */
+function renderShotPaste(imgUrl){
+  return `
+  <div class="grab"></div>
+  <div class="stitle">${imgUrl?'截图已载入':'粘贴截图里的文字'}</div>
+  <div class="ssub">${imgUrl
+      ? '网页版没有 OCR 引擎，把你的截图文字贴进来就能解析。相册里打开这张图 → 长按选中文字 → 拷贝 → 粘下面。（原生 App 里这一步是自动的）'
+      : '相册打开截图 → 长按文字「实况文本」全选拷贝 → 粘到这里，无需联网 OCR。'}</div>
+  ${imgUrl?`<div class="scanwrap" style="padding-bottom:12px"><img class="scanimg" src="${imgUrl}" alt="截图"></div>`:''}
+  <div style="padding:0 16px">
+    <textarea id="shotText" rows="7" placeholder="渝水区芝士火鸡面烤冷面&#10;6.00&#10;支付时间 2026-10-21 14:30:19&#10;订单号 2026..."
+      style="width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--sep);background:var(--bg);font-size:14px;font-family:inherit;outline:none;color:var(--label);line-height:1.55;resize:none"></textarea>
+  </div>
+  <button class="bigbtn" data-act="shot-parse">识别这段文字</button>
+  <button class="bigbtn ghost" data-act="shot-again" style="margin-top:10px;margin-bottom:6px">返回</button>
+  `;
+}
+
+/* ---------- 识别结果：字段可改 ---------- */
+function renderShotConfirm(p){
+  const cat = SHOT.cat, dir = SHOT.dir, src = SHOT.src;
+  return `
+  <div class="grab"></div>
+  <div class="okico">${I.check}</div>
+  <div class="stitle center" style="padding-bottom:2px">识别完成</div>
+  <div class="ssub center" style="padding-bottom:12px">字段都能改，核对完保存</div>
+
+  ${p.missingAmount?`<div class="note" style="margin:0 16px 12px">${I.info}<p><b>金额没读出来</b><br>截图里金额那行大字偶尔会识别失败（字号大、反白），手填一下就好，其余字段都齐了。</p></div>`:''}
+  <div class="field"><label>金额</label>
+    <input class="finput big" id="shAmt" inputmode="decimal" placeholder="0.00" value="${p.amount?money(p.amount):''}"></div>
+
+  <div class="field"><label>收支</label>
+    <div class="seg" style="margin:0">
+      <button data-act="shot-dir" data-dir="out" class="${dir==='out'?'on':''}">支出</button>
+      <button data-act="shot-dir" data-dir="in" class="${dir==='in'?'on':''}">收入</button>
+    </div></div>
+
+  <div class="field"><label>商户</label>
+    <input class="finput" id="shMer" value="${esc(p.merchant)}"></div>
+
+  <div class="field"><label>时间</label>
+    <input class="finput" id="shTime" value="${p.time}"></div>
+
+  <div class="field"><label>来源</label>
+    <div class="seg" style="margin:0">
+      <button data-act="shot-src" data-src="wx" class="${src==='wx'?'on':''}">微信支付</button>
+      <button data-act="shot-src" data-src="ali" class="${src==='ali'?'on':''}">支付宝</button>
+    </div></div>
+
+  ${p.order?`<div class="field"><label>交易单号</label>
+    <div class="mono" style="padding:2px 0;word-break:break-all">${esc(p.order)}</div></div>`:''}
+  ${p.product?`<div class="field"><label>商品说明</label>
+    <div style="font-size:13px;color:var(--label2);line-height:1.45">${esc(p.product)}</div></div>`:''}
+
+  <div class="section-title" style="margin:8px 16px 8px"><span>分类</span><span style="font-weight:500;color:var(--label2)">${cat?'已自动匹配':'没匹配上，选一个'}</span></div>
+  <div class="chips" style="padding-top:0">
+    ${CATS.map(c=>`<div class="chip-sel ${cat===c.id?'on':''}" data-act="shot-cat" data-cat="${c.id}" ${cat===c.id?`style="background:${catColor(c.id)};border-color:${catColor(c.id)}"`:''}>${catIcon(c.id)} ${c.name}</div>`).join('')}
+  </div>
+
+  <button class="bigbtn" data-act="shot-save">${I.check} 保存这笔账</button>
+  <button class="bigbtn ghost" data-act="shot-again" style="margin-top:10px">换一张截图</button>
   <button class="bigbtn ghost" data-act="close-sheet" style="margin-top:10px;margin-bottom:6px">取消</button>
   `;
 }
 
-/* 把解析结果存为待确认状态并弹卡 */
-let SHARE_PENDING = null;
-function openShareConfirm(p){
-  SHARE_PENDING = p;
-  openSheet(renderShareSheet(p));
-}
+function saveShot(){
+  if(!SHOT.p) return;
+  const p = SHOT.p;
+  const amt = Math.round(parseFloat((($('#shAmt')||{}).value||'').replace(/[^\d.]/g,''))*100)/100;
+  if(!isFinite(amt) || amt <= 0){ toast('金额没填对，改一下'); return; }
+  const mer = ((($('#shMer')||{}).value)||'').trim() || p.merchant || '未知商户';
+  let time = ((($('#shTime')||{}).value)||'').trim();
+  if(!/^\d{4}-\d{2}-\d{2}\s+\d{1,2}:\d{2}/.test(time)) time = p.time;
+  time = time.replace(/[\u3000\/]/g, m => m === '/' ? '-' : ' ').replace(/^(\d{4}-\d{2}-\d{2})\s+(\d):/, '$1 0$2:');
+  if(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(time)) time += ':00';
 
-/* 保存分享来的这笔 */
-function saveShare(catOverride){
-  if(!SHARE_PENDING) return;
-  const p = SHARE_PENDING;
-  const cat = catOverride || p.cat || null;
+  const cat = SHOT.cat;
   TX = [{
-    id: newId(), src: p.src, time: p.time, merchant: p.merchant,
-    product: p.product || '', amount: p.amount, dir: p.dir,
-    type: p.type || '分享记账', status:'',
-    cat, sub: cat ? pickSub(cat, p.merchant + ' ' + (p.product||'')) : null,
-    auto: !!cat, order: 'S' + Date.now(), method:'', note: p.note || ''
-  }, ...TX].sort((a,b)=>a.time<b.time?1:-1);
+    id: newId(), src: SHOT.src, time, merchant: mer, product: p.product || '',
+    amount: amt, dir: SHOT.dir, type: p.type || '截图记账', status:'',
+    cat, sub: cat ? pickSub(cat, mer + ' ' + (p.product||'')) : null,
+    auto: !!cat, order: p.order || '', method:'', note:''
+  }, ...TX].sort((a,b)=>a.time<b.time ? 1 : -1);
+
   S.imported = true;
   markReal();
-  SHARE_PENDING = null;
+  SHOT = { img:null, ocr:'', p:null, cat:null, dir:'out', src:'wx' };
   closeSheet();
   S.tab = 'home'; S.detailId = null; S._scrollTop = 0;
   rerender();
-  setTimeout(()=>toast('已记账 ¥' + money(p.amount)), 200);
+  setTimeout(()=>toast('已记账 ¥' + money(amt)), 200);
 }
+
+/* 把相册选的真实截图接进来：原型没有 OCR 引擎，直接引导到「粘贴文字」，
+   同时保留一条样本演示路径，方便看完整交互 */
+function pickShotFile(file){
+  if(!file) return;
+  let url = '';
+  try{ url = URL.createObjectURL(file); }catch(e){}
+  openSheet(renderShotPaste(url));
+  setTimeout(()=>{ const b=$('#shotText'); if(b) b.focus(); }, 200);
+}
+document.addEventListener('change', e=>{
+  if(e.target && e.target.id === 'shotFile'){
+    const f = e.target.files && e.target.files[0];
+    if(f) pickShotFile(f);
+  }
+}, true);
 
 /* ===== 清空数据确认 ===== */
 function renderClearSheet(){
@@ -1635,22 +1934,24 @@ document.addEventListener('click', e=>{
       S._scrollTop=0; rerender(); break;
     case 'open-uncat': S.tab='uncat'; S.detailId=null; S._scrollTop=0; rerender(); break;
     case 'add':   openSheet(renderManualSheet()); break;
-    case 'scan':  openSheet(renderManualSheet(true)); break;
     case 'search':    openSheet(renderSearchSheet()); setTimeout(()=>{ const b=$('#searchBox'); if(b){ b.focus(); b.addEventListener('input', e=>doSearch(e.target.value)); } doSearch(''); }, 120); break;
     case 'open-source': openSheet(renderSourceSheet()); break;
     case 'pick-files':  runImport(); break;
     case 'run-import':  runImport(); break;
     case 'pick-again':  runImport(); break;
     case 'close-sheet': closeSheet(); rerender(true); break;
+    case 'view-day':  S.statsView='day'; rerender(true); break;
     case 'view-cat':  S.statsView='cat'; rerender(true); break;
     case 'view-trend':S.statsView='trend'; rerender(true); break;
+    case 'pick-day': {
+      if(S.tab!=='stats') break;
+      const key = tgt.dataset.day;
+      S.statsDay = (S.statsDay===key) ? null : key;
+      rerender(true); break;
+    }
     case 'pick-month':
       if(S.tab!=='stats') break;
-      S.statsMonth = tgt.dataset.month; S.statsFrom = null; S.statsTo = null;
-      rerender(true); break;
-    case 'clear-range':
-      if(S.tab!=='stats') break;
-      S.statsFrom = null; S.statsTo = null;
+      S.statsMonth = tgt.dataset.month; S.statsDay = null;
       rerender(true); break;
     case 'prev-month': {
       const ms = availableMonths();
@@ -1711,55 +2012,42 @@ document.addEventListener('click', e=>{
       S.detailId=null; S._scrollTop=0; rerender(); toast('已将这笔排除出统计'); break;
     case 'act-cats':  S.tab='cats'; S.detailId=null; S._scrollTop=0; rerender(); break;
     case 'act-rules': S.tab='rules'; S.detailId=null; S._scrollTop=0; rerender(); break;
-    case 'share-entry': {
-      openSheet(`
-        <div class="grab"></div>
-        <div class="stitle">分享记账</div>
-        <div class="ssub">把微信/支付宝付款成功页的文字粘贴进来，自动提取金额、商户、时间。</div>
-        <div style="padding:0 16px">
-          <textarea id="shareText" rows="6" placeholder="向 瑞幸咖啡(张江店) 付款&#10;金额 ¥19.90&#10;支付时间: 2026-10-20 12:23:08"
-            style="width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--sep);background:var(--bg);font-size:14px;font-family:inherit;outline:none;color:var(--label);line-height:1.5;resize:none"></textarea>
-        </div>
-        <button class="bigbtn" data-act="do-paste-share">识别</button>
-        <button class="bigbtn ghost" data-act="close-sheet" style="margin-top:10px;margin-bottom:6px">取消</button>
-      `);
-      setTimeout(()=>{ const b=$('#shareText'); if(b) b.focus(); }, 150);
+    case 'shot-entry': openSheet(renderShotSheet()); break;
+    case 'shot-pick': {
+      const inp = document.getElementById('shotFile');
+      if(inp){ inp.value = ''; inp.click(); }
       break;
     }
-    case 'do-paste-share': {
-      const txt = ($('#shareText').value||'').trim();
-      if(!txt){ toast('先粘贴内容'); break; }
-      const parsed = parseSharedText(txt);
-      if(!parsed){
-        openSheet(`<div class="grab"></div><div class="stitle">没识别出来</div>
-          <div class="ssub">文字里没找到金额，请确认粘贴的是支付成功页内容。</div>
-          <button class="bigbtn ghost" data-act="close-sheet" style="margin-bottom:10px">返回</button>`);
-        break;
-      }
-      parsed.cat = autoCategorize(parsed.merchant, parsed.type, parsed.product);
-      SHARE_PENDING = parsed;
-      openSheet(renderShareSheet(parsed));
+    case 'shot-paste': openSheet(renderShotPaste());
+      setTimeout(()=>{ const b=document.getElementById('shotText'); if(b) b.focus(); }, 160);
+      break;
+    case 'shot-parse': {
+      const box = document.getElementById('shotText');
+      const txt = ((box && box.value) || '').trim();
+      if(!txt){ toast('先把文字粘进来'); break; }
+      runShotScan(null, txt);
       break;
     }
-    case 'share-save': saveShare(); break;
-    case 'share-edit': {
-      if(!SHARE_PENDING) break;
-      const p = SHARE_PENDING;
-      openSheet(`
-        <div class="grab"></div>
-        <div class="stitle">选分类</div>
-        <div class="ssub">¥${money(p.amount)} · ${esc(p.merchant)}</div>
-        <div class="chips">
-          ${CATS.map(c=>`<div class="chip-sel" data-act="share-pick-cat" data-cat="${c.id}">${catIcon(c.id)} ${esc((loadCatCfg()[c.id]||{}).name||c.name)}</div>`).join('')}
-        </div>
-      `);
+    case 'shot-dir': {
+      document.querySelectorAll('[data-act="shot-dir"]').forEach(b=>b.classList.toggle('on', b===tgt));
+      SHOT.dir = tgt.dataset.dir;
       break;
     }
-    case 'share-pick-cat': {
-      saveShare(tgt.dataset.cat);
-      toast('已按所选分类记账');
+    case 'shot-src': {
+      document.querySelectorAll('[data-act="shot-src"]').forEach(b=>b.classList.toggle('on', b===tgt));
+      SHOT.src = tgt.dataset.src;
       break;
     }
+    case 'shot-cat': {
+      SHOT.cat = tgt.dataset.cat;
+      const wrap = tgt.parentElement;
+      wrap.querySelectorAll('.chip-sel').forEach(el=>{ el.classList.remove('on'); el.style.cssText=''; });
+      tgt.classList.add('on');
+      tgt.style.cssText = 'background:'+catColor(SHOT.cat)+';border-color:'+catColor(SHOT.cat);
+      break;
+    }
+    case 'shot-save': saveShot(); break;
+    case 'shot-again': openSheet(renderShotSheet()); break;
     case 'act-export': openSheet(renderExportSheet()); break;
     case 'act-profile': openSheet(renderProfileSheet()); break;
     case 'pv-color': {
@@ -2058,24 +2346,24 @@ async function showLockScreen(){
 })();
 rerender();
 
-/* ===== 分享记账入口 =====
-   URL 参数 ?share=内容 —— 供 iOS 快捷指令把分享文本传进来 */
-function bootShare(){
-  const p = new URLSearchParams(location.search);
-  const raw = p.get('share');
+/* ===== 外部文本入口 =====
+   没有分享入口，所以外部进来的是「文字」：iOS 快捷指令做完 OCR 后可以调
+   index.html?text=... （或旧参数 ?share=...），解析成功就直接弹出确认卡 */
+function bootFromText(){
+  const q = new URLSearchParams(location.search);
+  const raw = q.get('text') || q.get('share');
   if(!raw) return;
-  try{
-    const parsed = parseSharedText(decodeURIComponent(raw));
-    if(parsed){
-      parsed.cat = autoCategorize(parsed.merchant, parsed.type, parsed.product);
-      history.replaceState(null, '', location.origin + location.pathname + location.hash);
-      setTimeout(()=>openShareConfirm(parsed), 200);
-    } else {
-      toast('没从分享内容里认出金额');
-    }
-  }catch(e){}
+  let parsed = null;
+  try{ parsed = parseBillText(decodeURIComponent(raw)); }catch(e){}
+  history.replaceState(null, '', location.origin + location.pathname + location.hash);
+  if(!parsed){ toast('没从这段文字里认出金额'); return; }
+  SHOT.ocr = raw; SHOT.p = parsed;
+  SHOT.cat = parsed.cat || autoCategorize(parsed.merchant, parsed.type, parsed.product);
+  SHOT.dir = parsed.dir;
+  SHOT.src = parsed.src === 'manual' ? 'wx' : parsed.src;
+  setTimeout(()=>openSheet(renderShotConfirm(parsed)), 260);
 }
-bootShare();
+bootFromText();
 
 document.addEventListener('click', e=>{
   const tgt = e.target.closest('[data-act="do-export"],[data-act="copy-export"],[data-act="open-export"]');
